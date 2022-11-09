@@ -1,12 +1,17 @@
 #include "MusaeParser.h"
 
 MusaeParser::MusaeParser(std::string edges_csv, std::string target_csv, std::string features_json) {
+  num_edges_ = 0;
+  num_nodes_ = 0;
+  nodes_ = std::vector<Node>();
   std::ifstream edges_file(edges_csv);
   std::string edge;
   // skip first line since it contains headers
-  std::getline(edges_file, edge);
   if (edges_file.is_open()) {
-    while (getline(edges_file, edge)) {
+    std::getline(edges_file, edge);
+  }
+  if (edges_file.is_open()) {
+    while (std::getline(edges_file, edge)) {
       // edge = "id_1,id_2"
       unsigned int id_1 = std::stoi(edge.substr(0, edge.find(",")));
       unsigned int id_2 = std::stoi(edge.substr(edge.find(",") + 1));
