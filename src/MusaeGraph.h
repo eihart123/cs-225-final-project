@@ -6,7 +6,7 @@
 #include <string>
 #include <vector>
 
-class MusaeParser {
+class MusaeGraph {
 public:
   struct Node {
     std::set<unsigned int> neighbors_;
@@ -18,7 +18,7 @@ public:
    * @param target_csv The target.csv file mapping IDs to usernames
    * @param features_json The features.json file (likely will not be used)
    */
-  MusaeParser(std::string edges_csv, std::string target_csv, std::string features_json);
+  MusaeGraph(std::string edges_csv, std::string target_csv, std::string features_json);
   
   /**
    * @brief Get the number of edges
@@ -36,6 +36,8 @@ public:
 
   // TODO: Implement BFS, Djikstra, and Girvan_Newman
 
+  std::vector<std::set<unsigned int>> bfs_traversal(unsigned int user, unsigned int degree_connections);
+
 private:
   /**
    * @brief Helper function to insert an edge to build the adjacency list
@@ -48,6 +50,7 @@ private:
   unsigned int num_edges_;
   unsigned int num_nodes_;
   std::vector<Node> nodes_;
+
 };
 
 #endif
