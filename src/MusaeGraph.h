@@ -5,6 +5,7 @@
 #include <set>
 #include <string>
 #include <vector>
+#include <map>
 
 class MusaeGraph {
 public:
@@ -36,7 +37,7 @@ public:
 
   // TODO: Implement BFS, Djikstra, and Girvan_Newman
 
-  std::vector<std::set<unsigned int>> bfs_traversal(unsigned int user, unsigned int degree_connections);
+  std::map<unsigned int, std::vector<unsigned int>> bfs_traversal(unsigned int user, unsigned int degree_connections);
   
 
   
