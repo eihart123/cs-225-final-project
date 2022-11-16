@@ -37,7 +37,9 @@ public:
   // TODO: Implement BFS, Djikstra, and Girvan_Newman
 
   std::vector<std::set<unsigned int>> bfs_traversal(unsigned int user, unsigned int degree_connections);
+  
 
+  
 private:
   /**
    * @brief Helper function to insert an edge to build the adjacency list

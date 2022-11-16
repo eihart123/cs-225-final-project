@@ -47,6 +47,7 @@ unsigned int MusaeGraph::getCountNodes() const {
   return num_nodes_;
 }
 
+
 std::vector<std::set<unsigned int>> MusaeGraph::bfs_traversal(unsigned int user, unsigned int degree_connections) {
 
   std::vector<std::set<unsigned int>> output;

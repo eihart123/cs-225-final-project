@@ -1,6 +1,6 @@
-#include "MusaeParser.h"
+#include "MusaeGraph.h"
 
-MusaeParser::MusaeParser(std::string edges_csv, std::string target_csv, std::string features_json) {
+MusaeGraph::MusaeGraph(std::string edges_csv, std::string target_csv, std::string features_json) {
   num_edges_ = 0;
   num_nodes_ = 0;
   nodes_ = std::vector<Node>();
@@ -20,7 +20,7 @@ MusaeParser::MusaeParser(std::string edges_csv, std::string target_csv, std::str
   }
 }
 
-void MusaeParser::insertEdge(unsigned int id_1, unsigned int id_2) {
+void MusaeGraph::insertEdge(unsigned int id_1, unsigned int id_2) {
   // resize the nodes_ vector if necessary
   if (id_1 >= nodes_.size()) {
     nodes_.resize(id_1 + 1);
@@ -36,10 +36,11 @@ void MusaeParser::insertEdge(unsigned int id_1, unsigned int id_2) {
   num_nodes_ = nodes_.size();
 }
 
-unsigned int MusaeParser::getCountEdges() const {
+unsigned int MusaeGraph::getCountEdges() const {
   return num_edges_;
 }
 
-unsigned int MusaeParser::getCountNodes() const {
+unsigned int MusaeGraph::getCountNodes() const {
   return num_nodes_;
 }
+
