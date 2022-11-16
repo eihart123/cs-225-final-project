@@ -2,6 +2,7 @@
 #include <queue>
 #include <map>
 #include <iostream>
+#include <bits/stdc++.h>
 
 MusaeGraph::MusaeGraph(std::string edges_csv, std::string target_csv, std::string features_json) {
   num_edges_ = 0;
@@ -128,17 +129,62 @@ std::vector<std::set<unsigned int>> MusaeGraph::bfs_traversal(unsigned int user,
 
 }
 
-std::vector<std::set<Node>> MusaeGraph::djikstra(Node source, int degree) const {
+std::map<Node, unsigned int> MusaeGraph::djikstra(Graph graph, Node source) const {
   // TODO: complete implementation
-  std::vector<bool> visited(num_nodes_, false);
-  std::set<Node> unvisited_nodes(nodes_.begin(), nodes_.end());
+
+  std::map<Node, unsigned int> dist;
+  std::map<Node, Node> prev;
+
+  // foreach (Vertex v : G):
+  for (Node node : graph.nodes_) {
+    //   d[v] = +inf
+    dist[node] = INT_MAX;
+    //   p[v] = NULL
+    prev[node] = NULL;
+  }
+  //   d[s] = 0
+  int dist[source] = 0;
+
+  // PriorityQueue Q // min distance, defined by d[v]
+  priority_queue<Node> p_queue;
+
+  //   Q.buildHeap(G.vertices())
+  p_queue.buildHeap(nodes_);
+
+  //   Graph T // "labeled set"
+  std::set<Node> labeled_set;
+
+  //   repeat n times:
+  while (!p_queue.empty()) {
+    //   Vertex u = Q.removeMin()
+    Node curr = p_queue.removeMin();
+
+    //   T.add(u)
+    labeled_set.add(curr);
+
+    //   foreach (Vertex v : neighbors of u not in T):
+    for (Node node : curr.neighbors_) {
+      //   if cost(v, m) < d[v]:
+      if (dist[curr] + cost(curr, node) < dist[node]) {
+        //   d[v] = cost(v, m)
+        dist[node] = cost(curr, node)
+        //   p[v] = m
+        prev[node] = curr;
+      }
+    }
+  }
+  return dist;
 }
 
 unsigned int MusaeGraph::findShortestPath(Node source, Node destination) const {
-  std::vector<std::set<Node>> connections = djikstra(source, );
-
+  // TODO: implement
+  std::map<Node, unsigned int> connections = djikstra(source);
+  return 1;
 }
 
 std::vector<Node> MusaeGraph::getRecommendedFollowers(Node source) {
-
+  // TODO: implement
+  std::map<Node, unsigned int> connections = djikstra(source);
+  std::vector<Node> do_nothing = connections.first;
+  return do_nothing;
 }
