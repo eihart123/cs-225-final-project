@@ -43,3 +43,16 @@ unsigned int MusaeParser::getCountEdges() const {
 unsigned int MusaeParser::getCountNodes() const {
   return num_nodes_;
 }
+
+std::vector<std::set<Node>> MusaeParser::djikstra(Node source, int degree) const {
+  std::vector<bool> visited(num_nodes_, false);
+  std::set<Node> unvisited_nodes(nodes_.begin(), nodes_.end());
+}
+
+unsigned int MusaeParser::findShortestPath(Node source, Node destination) const {
+  std::vector<std::set<Node>> connections = djikstra(source, );
+}
+
+std::vector<Node> MusaeParser::getRecommendedFollowers(Node source) {
+
+}

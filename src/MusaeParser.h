@@ -5,6 +5,8 @@
 #include <set>
 #include <string>
 #include <vector>
+#include <queue>
+#include <climits>
 
 class MusaeParser {
 public:
@@ -35,6 +37,27 @@ public:
   unsigned int getCountNodes() const;
 
   // TODO: Implement BFS, Djikstra, and Girvan_Newman
+
+  /**
+  * @brief Implement Djikstra's algorithm
+  *
+  * @return Vector of sets containing nodes up to degree-th degree of connection
+  */
+  std::vector<std::set<Node>> djikstra(Node source, int degree) const;
+
+  /**
+  * @brief Use Djikstra's algorithm to find shortest path between two given nodes
+  *
+  * @return Unsigned integer representing number of nodes
+  */
+  unsigned int findShortestPath(Node source, Node destination) const;
+
+  /**
+  * @brief Use Djikstra's algorithm to find recommended followers for user
+  *
+  * @return Vector of nodes with 2nd and 3rd degree connections to user
+  */
+  std::vector<Node> getRecommendedFollowers(Node source) const;
 
 private:
   /**
