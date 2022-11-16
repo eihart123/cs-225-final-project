@@ -1,6 +1,5 @@
 #include "MusaeGraph.h"
 #include <queue>
-#include <map>
 #include <iostream>
 #include <bits/stdc++.h>
 
@@ -49,15 +48,14 @@ unsigned int MusaeGraph::getCountNodes() const {
 }
 
 
-std::vector<std::set<unsigned int>> MusaeGraph::bfs_traversal(unsigned int user, unsigned int degree_connections) {
-
-  std::vector<std::set<unsigned int>> output;
+std::map<unsigned int, std::vector<unsigned int>> MusaeGraph::bfs_traversal(unsigned int user, unsigned int degree_connections) {
+  
+  std::map<unsigned int, std::vector<unsigned int>> map;
 
   std::vector<bool> visited_;
   visited_.resize(nodes_.size(), false);
 
   std::queue<std::vector<unsigned int>> queue;
-  std::map<int, std::vector<unsigned int>> map;
   std::vector<unsigned int> vect;
 
   vect.push_back(user);
@@ -71,7 +69,7 @@ std::vector<std::set<unsigned int>> MusaeGraph::bfs_traversal(unsigned int user,
 
     if ((front_vect.size() - 1) >= 1 && (front_vect.size() - 1) <= degree_connections) {
 
-        std::map<int, std::vector<unsigned int>>::iterator lookup = map.find(front_vect.size() - 1);
+        std::map<unsigned int, std::vector<unsigned int>>::iterator lookup = map.find(front_vect.size() - 1);
         if (lookup == map.end()) {
           map[front_vect.size() - 1] = {front_val};
           } else {
@@ -97,7 +95,7 @@ std::vector<std::set<unsigned int>> MusaeGraph::bfs_traversal(unsigned int user,
     }
   }
 
-  // std::map<int, std::vector<unsigned int>>::iterator it;
+  // std::map<unsigned int, std::vector<unsigned int>>::iterator it;
   // for (it = map.begin(); it != map.end(); it++) {
   //   std::cout << "key: " << (*it).first << std::endl;
   //   std::cout << std::endl;
@@ -112,19 +110,7 @@ std::vector<std::set<unsigned int>> MusaeGraph::bfs_traversal(unsigned int user,
   //   std::cout << std::endl;
   // }
 
-  std::map<int, std::vector<unsigned int>>::iterator it;
-  for (it = map.begin(); it != map.end(); it++) {
-    std::set<unsigned int> set;
-    for (size_t i = 0; i < (*it).second.size(); i++) {
-        set.insert((*it).second.at(i));
-    }
-    output.push_back(set);
-  }
-
-
-
-
- return output;
+ return map;
   
 
 }
