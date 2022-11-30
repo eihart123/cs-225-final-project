@@ -127,52 +127,52 @@ std::map<unsigned int, std::vector<unsigned int>> MusaeGraph::bfs_traversal(unsi
   return map;
 }
 
-std::map<MusaeGraph::Node, unsigned int> MusaeGraph::djikstra(Node source) const {
-  // TODO: complete implementation
+// std::map<MusaeGraph::Node, unsigned int> MusaeGraph::djikstra(Node source) const {
+//   // TODO: complete implementation
 
-  std::map<Node, unsigned int> dist;
-  std::map<Node, Node> prev;
+//   std::map<Node, unsigned int> dist;
+//   std::map<Node, Node> prev;
 
-  // foreach (Vertex v : G):
-  for (Node node : nodes_) {
-    //   d[v] = +inf
-    dist[node] = INT_MAX;
-    //   p[v] = NULL
-    prev[node] = NULL;
-  }
-  //   d[s] = 0
-  int dist[source] = 0;
+//   // foreach (Vertex v : G):
+//   for (Node node : nodes_) {
+//     //   d[v] = +inf
+//     dist[node] = INT_MAX;
+//     //   p[v] = NULL
+//     prev[node] = NULL;
+//   }
+//   //   d[s] = 0
+//   int dist[source] = 0;
 
-  // PriorityQueue Q // min distance, defined by d[v]
-  priority_queue<Node> p_queue;
+//   // PriorityQueue Q // min distance, defined by d[v]
+//   priority_queue<Node> p_queue;
 
-  //   Q.buildHeap(G.vertices())
-  p_queue.buildHeap(nodes_);
+//   //   Q.buildHeap(G.vertices())
+//   p_queue.buildHeap(nodes_);
 
-  //   Graph T // "labeled set"
-  std::set<Node> labeled_set;
+//   //   Graph T // "labeled set"
+//   std::set<Node> labeled_set;
 
-  //   repeat n times:
-  while (!p_queue.empty()) {
-    //   Vertex u = Q.removeMin()
-    Node curr = p_queue.removeMin();
+//   //   repeat n times:
+//   while (!p_queue.empty()) {
+//     //   Vertex u = Q.removeMin()
+//     Node curr = p_queue.removeMin();
 
-    //   T.add(u)
-    labeled_set.add(curr);
+//     //   T.add(u)
+//     labeled_set.add(curr);
 
-    //   foreach (Vertex v : neighbors of u not in T):
-    for (Node node : curr.neighbors_) {
-      //   if cost(v, m) < d[v]:
-      if (dist[curr] + cost(curr, node) < dist[node]) {
-        //   d[v] = cost(v, m)
-        dist[node] = cost(curr, node)
-        //   p[v] = m
-        prev[node] = curr;
-      }
-    }
-  }
-  return dist;
-}
+//     //   foreach (Vertex v : neighbors of u not in T):
+//     for (Node node : curr.neighbors_) {
+//       //   if cost(v, m) < d[v]:
+//       if (dist[curr] + cost(curr, node) < dist[node]) {
+//         //   d[v] = cost(v, m)
+//         dist[node] = cost(curr, node)
+//         //   p[v] = m
+//         prev[node] = curr;
+//       }
+//     }
+//   }
+//   return dist;
+// }
 
 unsigned int MusaeGraph::findShortestPath(Node source, Node destination) const {
   // TODO: implement
