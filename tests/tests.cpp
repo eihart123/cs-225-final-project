@@ -117,7 +117,7 @@ TEST_CASE("test2_bfs_degree3", "[weight=15], [test=2], [bfs]") {
   }
   std::set<unsigned int> result_degree3;
   for (auto user_id : bfs[3]) {
-    result_degree2.insert(user_id);
+    result_degree3.insert(user_id);
   }
   REQUIRE(result_degree1 == correct_degree1);
   REQUIRE(result_degree2 == correct_degree2);
