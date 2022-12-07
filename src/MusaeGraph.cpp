@@ -130,15 +130,15 @@ std::map<unsigned int, std::vector<unsigned int>> MusaeGraph::bfs_traversal(unsi
 std::map<MusaeGraph::Node, unsigned int> MusaeGraph::djikstra(Node source) const {
   // TODO: complete implementation
 
-  std::map<Node, unsigned int> dist;
-  std::map<Node, Node> prev;
+  std::vector<unsigned int> dist;
+  std::vector<bool> prev;
 
   // foreach (Vertex v : G):
-  for (Node node : nodes_) {
+  for (int i = 1; i < nodes_.size; i++) {
     //   d[v] = +inf
     dist[node] = INT_MAX;
     //   p[v] = NULL
-    prev[node] = NULL;
+    prev[node] = -1;
   }
   //   d[s] = 0
   int dist[source] = 0;
@@ -165,7 +165,7 @@ std::map<MusaeGraph::Node, unsigned int> MusaeGraph::djikstra(Node source) const
       //   if cost(v, m) < d[v]:
       if (dist[curr] + cost(curr, node) < dist[node]) {
         //   d[v] = cost(v, m)
-        dist[node] = cost(curr, node)
+        dist[node] = cost(curr, node);
         //   p[v] = m
         prev[node] = curr;
       }
