@@ -35,7 +35,31 @@ int main() {
   for (auto it = users_to_follow.begin(); it != users_to_follow.end(); it++) {
     std::cout << "Degree: " << std::to_string((*it).second) << ", ID: " << std::to_string((*it).first) << ", Username: " << m.getUsername((*it).first) << std::endl;;
   }
-    std::cout << "=======================================" << std::endl;
+  std::cout << "=======================================" << std::endl;
   
+  std::cout << std::endl << std::endl << std::endl;
+
+  edges_csv = "../data/git_web_ml/musae_git_edges.csv";
+  target_csv = "../data/git_web_ml/musae_git_target.csv";
+  features_json = "../data/git_web_ml/musae_git_features.json";
+  MusaeGraph musae(edges_csv, target_csv, features_json);
+
+  unsigned int test_id = 0;
+  while (true) {
+    std::cout << "Enter ID of user to check: ";
+    std::cin >> test_id;
+    std::cout << std::endl;
+    if (test_id >= musae.getCountNodes()) {
+      std::cout << "Invalid ID provided - too large" << std::endl;
+    }
+    std::cout << "Found user: " << musae.getUsername(test_id) << std::endl;
+    std::cout << "You might be interested in following:" << std::endl;
+    auto recommended = musae.getRecommendedUsersToFollow(test_id, 3, 5);
+    // print recommended users
+    for (auto it = users_to_follow.begin(); it != users_to_follow.end(); it++) {
+      std::cout << musae.getUsername((*it).first) << " (" << std::to_string((*it).second) << " degrees away)" << std::endl;;
+    }
+  }
+
   return 0;
 }

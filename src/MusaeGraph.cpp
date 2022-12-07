@@ -127,8 +127,8 @@ std::map<unsigned int, std::vector<unsigned int>> MusaeGraph::bfs_traversal(unsi
   return map;
 }
 
-std::map<MusaeGraph::Node, unsigned int> MusaeGraph::djikstra(Node source) const {
-  // TODO: complete implementation
+// std::map<MusaeGraph::Node, unsigned int> MusaeGraph::djikstra(Node source) const {
+//   // TODO: complete implementation
 
   std::vector<unsigned int> dist;
   std::vector<bool> prev;
@@ -143,22 +143,22 @@ std::map<MusaeGraph::Node, unsigned int> MusaeGraph::djikstra(Node source) const
   //   d[s] = 0
   int dist[source] = 0;
 
-  // PriorityQueue Q // min distance, defined by d[v]
-  priority_queue<Node> p_queue;
+//   // PriorityQueue Q // min distance, defined by d[v]
+//   priority_queue<Node> p_queue;
 
-  //   Q.buildHeap(G.vertices())
-  p_queue.buildHeap(nodes_);
+//   //   Q.buildHeap(G.vertices())
+//   p_queue.buildHeap(nodes_);
 
-  //   Graph T // "labeled set"
-  std::set<Node> labeled_set;
+//   //   Graph T // "labeled set"
+//   std::set<Node> labeled_set;
 
-  //   repeat n times:
-  while (!p_queue.empty()) {
-    //   Vertex u = Q.removeMin()
-    Node curr = p_queue.removeMin();
+//   //   repeat n times:
+//   while (!p_queue.empty()) {
+//     //   Vertex u = Q.removeMin()
+//     Node curr = p_queue.removeMin();
 
-    //   T.add(u)
-    labeled_set.add(curr);
+//     //   T.add(u)
+//     labeled_set.add(curr);
 
     //   foreach (Vertex v : neighbors of u not in T):
     for (Node node : curr.neighbors_) {
