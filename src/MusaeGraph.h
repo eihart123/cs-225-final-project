@@ -24,6 +24,7 @@ public:
   struct Edge {
     unsigned int user1;
     unsigned int user2;
+    unsigned int sp_count;
 
     Edge(unsigned int one, unsigned int two) {
       if (one == two) {
@@ -40,6 +41,7 @@ public:
         user1 = two;
         user2 = one;
       }
+      sp_count = 0;
     }
     bool operator==(const Edge& other) {
       // ensure no duplicate edges
