@@ -19,6 +19,34 @@ public:
   struct Node {
     std::set<unsigned int> neighbors_;
   };
+  // Edge struct used for Girvan-Newman
+  // Required: user1 and user2 MUST be neighbors, can verify with Node struct
+  struct Edge {
+    unsigned int user1;
+    unsigned int user2;
+
+    Edge(unsigned int one, unsigned int two) {
+      if (one == two) {
+        throw std::invalid_argument("Edge cannot be between the same users");
+      }
+      // verify they are neighbors
+      // if (!nodes_[one].contains(two)) {
+      //   throw std::invalid_argument("The two users are not neighbors")
+      // }
+      if (one < two) {
+        user1 = one;
+        user2 = two;
+      } else {
+        user1 = two;
+        user2 = one;
+      }
+    }
+    bool operator==(const Edge& other) {
+      // ensure no duplicate edges
+      return ((user1==other.user1 && user2 == other.user2) || 
+              (user1 == other.user2 && user2 == other.user1));
+    }
+  };
   /**
    * @brief Construct a new MusaeGraph object
    * 
@@ -39,14 +67,14 @@ public:
   /**
    * @brief Get the number of edges
    * 
-   * @return Unsigned integer represnting number of edges
+   * @return Unsigned integer representing number of edges
    */
   unsigned int getCountEdges() const;
 
   /**
    * @brief Get the number of nodes
    * 
-   * @return Unsigned integer represnting number of nodes
+   * @return Unsigned integer representing number of nodes
    */
   unsigned int getCountNodes() const;
 
@@ -98,6 +126,9 @@ private:
   unsigned int num_nodes_;
   std::vector<Node> nodes_;
   std::vector<std::string> usernames_;
+  // edges_ vector used only for Girvan-Newman
+  std::vector<Edge> edges_;
+  
 };
 
 #endif
