@@ -68,6 +68,10 @@ void MusaeGraph::insertEdge(unsigned int id_1, unsigned int id_2) {
   num_nodes_ = nodes_.size();
 }
 
+std::set<unsigned> MusaeGraph::getNeighbors(unsigned user_id) const {
+  return nodes_[user_id].neighbors_;
+}
+
 std::string MusaeGraph::getUsername(unsigned int user_id) const {
   if (user_id >= usernames_.size()) {
     std::string error_msg = "invalid user id: " + std::to_string(user_id);
@@ -127,11 +131,11 @@ std::map<unsigned int, std::vector<unsigned int>> MusaeGraph::bfs_traversal(unsi
   return map;
 }
 
-std::vector<MusaeGraph::Node> MusaeGraph::djikstra(unsigned source, unsigned destination) {
+std::vector<unsigned> MusaeGraph::djikstra(unsigned source, unsigned destination) {
 
-  std::vector<unsigned int> distance;
+  std::vector<unsigned> distance;
   std::vector<bool> visited;
-  std::vector<Node> path;
+  std::vector<unsigned> path;
   for (unsigned user_id = 0; user_id < nodes_.size(); user_id++) {
     if (user_id == source) {
       distance[user_id] = 0;

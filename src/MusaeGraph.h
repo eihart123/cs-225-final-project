@@ -51,6 +51,13 @@ public:
   unsigned int getCountNodes() const;
 
   /**
+   * @brief Get the neighbors of a given user node
+   * 
+   * @return Set of unsigned integers representing neighbors of a node
+   */
+  std::set<unsigned> getNeighbors(unsigned user_id) const;
+
+  /**
    * @brief 
    * 
    * @param user 
