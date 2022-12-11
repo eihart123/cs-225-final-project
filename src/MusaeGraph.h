@@ -19,36 +19,6 @@ public:
   struct Node {
     std::set<unsigned int> neighbors_;
   };
-  // Edge struct used for Girvan-Newman
-  // Required: user1 and user2 MUST be neighbors, can verify with Node struct
-  struct Edge {
-    unsigned int user1;
-    unsigned int user2;
-    unsigned int sp_count;
-
-    Edge(unsigned int one, unsigned int two) {
-      if (one == two) {
-        throw std::invalid_argument("Edge cannot be between the same users");
-      }
-      // verify they are neighbors
-      // if (!nodes_[one].contains(two)) {
-      //   throw std::invalid_argument("The two users are not neighbors")
-      // }
-      if (one < two) {
-        user1 = one;
-        user2 = two;
-      } else {
-        user1 = two;
-        user2 = one;
-      }
-      sp_count = 0;
-    }
-    bool operator==(const Edge& other) {
-      // ensure no duplicate edges
-      return ((user1==other.user1 && user2 == other.user2) || 
-              (user1 == other.user2 && user2 == other.user1));
-    }
-  };
   /**
    * @brief Construct a new MusaeGraph object
    * 
@@ -113,7 +83,33 @@ public:
    */
   std::map<unsigned int, unsigned int> getRecommendedUsersToFollow(unsigned int user_id, unsigned int max_degree, int request_connection_count) const;  
 
-  // TODO: Implement Girvan_Newman to view generated communities
+  // GIRVAN-NEWMAN IMPLEMENTATION
+
+  /**
+   * @brief Calculates the betweenness centrality for each edge in a graph
+   * 
+   * @param nodes A reference to the graph adjacency list to use
+   * @param edges A reference to a map of edges and their centrality
+   * @return 0 if all edges are connected, n for number of edges that could not be computed for shortest path because it is now impossible
+   */
+  int betweennessCentrality(std::vector<Node>& nodes, std::map<std::string, unsigned int>& edges);
+
+  /**
+   * @brief Called after betweenness centrality is computed: remove the edge with the highest centrality
+   * 
+   * @param nodes A reference to the graph adjacency list to use
+   * @param edges A reference to a map of edges and their centrality
+   */
+  void removeEdgeByCentrality(std::vector<Node>& nodes, std::map<std::string, unsigned int>& edges);
+
+  /**
+   * @brief Implementation of Girvan-Newman algorithm. Runs until two communites are created
+   * 
+   * @return std::vector<std::vector<unsigned int>> 
+   */
+  std::vector<std::vector<unsigned int>> girvan();
+
+  std::vector<std::vector<unsigned int>> formatCommunities(std::vector<Node>& nodes);
   
 private:
   /**
@@ -129,7 +125,8 @@ private:
   std::vector<Node> nodes_;
   std::vector<std::string> usernames_;
   // edges_ vector used only for Girvan-Newman
-  std::vector<Edge> edges_;
+  // second is sp_count (number of shortet paths)
+  std::map<std::string, unsigned int> edges_;
   
 };
 
