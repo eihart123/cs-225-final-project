@@ -1,5 +1,6 @@
 #include <catch2/catch_test_macros.hpp>
 #include "MusaeGraph.h"
+#include <map>
 
 // Tests for MusaeGraph::getRecommendedUsersToFollow() can be found in main.cpp
 
@@ -83,7 +84,24 @@ TEST_CASE("test1_bfs_degree2", "[weight=20], [test=1], [bfs]") {
   REQUIRE(result_degree1 == correct_degree1);
   REQUIRE(result_degree2 == correct_degree2);
 }
+
 // Djikstra Test Cases
+
+TEST_CASE("test1_djikstra_self", "[weight=20], [test=1], [djikstra]") {
+  std::string edges_csv = "../tests/test1_edges.csv";
+  std::string target_csv = "../tests/test1_target.csv";
+  std::string features_json = "../tests/test1_features.json";
+  MusaeGraph m(edges_csv, target_csv, features_json);
+
+  std::vector<unsigned int> djikstra = m.djikstra(7, 7);
+  std::vector<unsigned int> correct1_self = {7};
+
+  REQUIRE(djikstra.size() == 2);
+  REQUIRE(djikstra == correct1_self);
+
+
+}
+
 TEST_CASE("test1_djikstra_1connection", "[weight=20], [test=1], [djikstra]") {
   std::string edges_csv = "../tests/test1_edges.csv";
   std::string target_csv = "../tests/test1_target.csv";
@@ -105,20 +123,20 @@ TEST_CASE("test1_djikstra_2connections", "[weight=20], [test=1], [djikstra]") {
   std::string features_json = "../tests/test1_features.json";
   MusaeGraph m(edges_csv, target_csv, features_json);
 
-  std::vector<unsigned int> djikstra = m.djikstra(1, 12);
-  std::vector<unsigned int> correct1_2connections = {1, 9, 12};
+  std::vector<unsigned int> djikstra = m.djikstra(6, 1);
+  std::vector<unsigned int> correct1_2connections = {6, 9, 1};
 
   REQUIRE(djikstra.size() == 3);
   REQUIRE(djikstra == correct1_2connections);
 
-  djikstra = m.djikstra(3, 8);
-  std::vector<unsigned int> correct2_2connections = {3, 2, 8};
+  djikstra = m.djikstra(8, 4);
+  std::vector<unsigned int> correct2_2connections = {8, 5, 4};
 
   REQUIRE(djikstra.size() == 3);
   REQUIRE(djikstra == correct2_2connections);
 
-  djikstra = m.djikstra(7, 14);
-  std::vector<unsigned int> correct3_2connections = {7, 13, 14};
+  djikstra = m.djikstra(0, 9);
+  std::vector<unsigned int> correct3_2connections = {0, 6, 9};
 
   REQUIRE(djikstra.size() == 3);
   REQUIRE(djikstra == correct3_2connections);
@@ -169,6 +187,7 @@ TEST_CASE("test2_bfs_degree3", "[weight=15], [test=2], [bfs]") {
 }
 
 // Djikstra Test Cases
+
 TEST_CASE("test2_djikstra_3connections", "[weight=20], [test=1], [djikstra]") {
   std::string edges_csv = "../tests/test1_edges.csv";
   std::string target_csv = "../tests/test1_target.csv";
@@ -216,6 +235,37 @@ TEST_CASE("test2_djikstra_4connections", "[weight=20], [test=1], [djikstra]") {
   }
   
   REQUIRE(check == true);
+
+}
+
+// Test All Nodes for Djikstras
+
+TEST_CASE("test2_bigdjikstra", "[weight=20], [test=1], [djikstra]") {
+  std::string edges_csv = "../tests/testallnodes_edges.csv";
+  std::string target_csv = "../tests/testallnodes_target.csv";
+  std::string features_json = "../tests/testallnodes_features.json";
+  MusaeGraph m(edges_csv, target_csv, features_json);
+
+  std::map<unsigned int, std::vector<unsigned int>> djikstra = m.djikstra(1);
+
+  std::vector<unsigned int> correct1_big = {1};
+  std::vector<unsigned int> correct3_big = {1, 3};
+  std::vector<unsigned int> correct4_big = {1, 3, 4}; 
+  std::vector<unsigned int> correct2_big = {1, 3, 4, 2};
+  std::vector<unsigned int> correct5_big = {1, 3, 4, 5};
+
+  std::vector<unsigned int> result1_big = djikstra[1];
+  std::vector<unsigned int> result3_big = djikstra[3];
+  std::vector<unsigned int> result4_big = djikstra[4];
+  std::vector<unsigned int> result2_big = djikstra[2];
+  std::vector<unsigned int> result5_big = djikstra[5];
+  
+  REQUIRE(result1_big == correct1_big);
+  REQUIRE(result3_big == correct3_big);
+  REQUIRE(result4_big == correct4_big);
+  REQUIRE(result2_big == correct2_big);
+  REQUIRE(result5_big == correct5_big);
+
 
 }
 
