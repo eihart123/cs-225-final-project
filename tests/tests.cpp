@@ -253,19 +253,21 @@ TEST_CASE("test2_bigdjikstra", "[weight=20], [test=1], [djikstra]") {
   std::vector<unsigned int> correct4_big = {1, 3, 4}; 
   std::vector<unsigned int> correct2_big = {1, 3, 4, 2};
   std::vector<unsigned int> correct5_big = {1, 3, 4, 5};
+  std::vector<unsigned int> correct0_big = {1, 3, 4, 5, 0};
 
   std::vector<unsigned int> result1_big = djikstra[1];
   std::vector<unsigned int> result3_big = djikstra[3];
   std::vector<unsigned int> result4_big = djikstra[4];
   std::vector<unsigned int> result2_big = djikstra[2];
   std::vector<unsigned int> result5_big = djikstra[5];
+  std::vector<unsigned int> result0_big = djikstra[0];
   
   REQUIRE(result1_big == correct1_big);
   REQUIRE(result3_big == correct3_big);
   REQUIRE(result4_big == correct4_big);
   REQUIRE(result2_big == correct2_big);
   REQUIRE(result5_big == correct5_big);
-
+  REQUIRE(result0_big == correct0_big);
 
 }
 

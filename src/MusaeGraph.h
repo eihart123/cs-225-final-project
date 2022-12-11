@@ -64,7 +64,8 @@ public:
   *
   * @return Vector of sets containing nodes up to degree-th degree of connection
   */
-  std::map<Node, unsigned int> djikstra(Node source) const;
+  std::vector<unsigned int> djikstra(unsigned source, unsigned destination);
+  std::map<unsigned int, std::vector<unsigned int>> djikstra(unsigned int source) const;
 
   /**
   * @brief Use Djikstra's algorithm to find shortest path between two given nodes
