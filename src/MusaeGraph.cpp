@@ -1,4 +1,5 @@
 #include "MusaeGraph.h"
+#include <bits/stdc++.h>
 
 MusaeGraph::MusaeGraph(std::string edges_csv, std::string target_csv, std::string features_json) {
   num_edges_ = 0;
@@ -131,71 +132,97 @@ std::map<unsigned int, std::vector<unsigned int>> MusaeGraph::bfs_traversal(unsi
   return map;
 }
 
-std::vector<unsigned int> MusaeGraph::djikstra(unsigned source, unsigned destination) {
-
-  std::vector<unsigned int> distance;
+std::vector<unsigned int> MusaeGraph::dijkstra(unsigned source, unsigned destination) const {
+  bool reverse_at_end = true;
+  if (source == destination) {
+    std::vector<unsigned int> path;
+    path.push_back(source);
+    return path;
+  } else if (source > destination) {
+    reverse_at_end = false;
+    unsigned temp = source;
+    source = destination;
+    destination = temp;
+  }
+  
+  std::vector<unsigned int> previous;
   std::vector<bool> visited;
-  std::vector<unsigned int> path;
-  for (unsigned user_id = 0; user_id < nodes_.size(); user_id++) {
-    if (user_id == source) {
-      distance[user_id] = 0;
-    } else {
-      distance[user_id] = 10000000;
+  previous.resize(nodes_.size(), INT_MAX);
+  visited.resize(nodes_.size(), false);
+  // for (unsigned user_id = 0; user_id < nodes_.size(); user_id++) {
+  //   previous[user_id] = INT_MAX;
+  // }
+
+  std::priority_queue<NodeComparator, std::vector<NodeComparator>, std::greater<NodeComparator>> pq;
+  pq.push(NodeComparator(source, 0));
+
+  // traverse the graph
+  while (!pq.empty() && pq.top().id != destination) {
+    NodeComparator curr = pq.top();
+    pq.pop();
+    unsigned int curr_id = curr.id;
+    for (unsigned int neighbor_id : nodes_[curr_id].neighbors_) {
+      if (visited[neighbor_id] == false) {
+        // add the neighbor to the priority queue, with distance +1
+        pq.push(NodeComparator(neighbor_id, curr.distance + 1));
+        if (previous[neighbor_id] == INT_MAX) {
+          previous[neighbor_id] = curr_id;
+        }
+      }
     }
-    visited[user_id] = false;
+    visited[curr_id] = true;
   }
 
-  for (unsigned id = 0; id < nodes_.size(); id++) {
-    int min, index = 10000000;
+  std::vector<unsigned int> path;
+  // if we cannot find the shortest path
+  if (pq.empty()) {
+    return path;
+  }
 
-    for (unsigned id = 0; id < nodes_.size(); id++) {
-      if (visited[id] == false && distance[id] < min) {
-        min = distance[id];
-        index = id;
-      }
-    }
-    visited[user_id] = true;
-    for (unsigned id = 0; id < nodes_.size(); id++) {
-      if (visited[id] == false && ) {
-        
-      }
-    }
-   
+  // create the path now that we have found our destination
+  unsigned curr = destination;
+  while (curr != source) {
+    path.push_back(curr);
+    curr = previous[curr];
+  }
+  path.push_back(source);
+  if (reverse_at_end) {
+    std::reverse(path.begin(), path.end());
   }
 
   return path;
 }
 
-//   // PriorityQueue Q // min distance, defined by d[v]
-//   priority_queue<Node> p_queue;
-
-
-std::map<unsigned int, std::vector<unsigned int>> MusaeGraph::djikstra(unsigned int source) const {
+std::map<unsigned int, std::vector<unsigned int>> MusaeGraph::dijkstra(unsigned int source) const {
   std::map<unsigned int, std::vector<unsigned int>> connections;
 
-  std::queue<unsigned int> queue;
-  std::vector<unsigned int> visited;
-  visited.resize(nodes_.size(), false);
-  queue.push(source);
+  // std::queue<unsigned int> queue;
+  // std::vector<unsigned int> visited;
+  // visited.resize(nodes_.size(), false);
+  // queue.push(source);
   
-  while (!queue.empty()) {
-    unsigned int front = queue.front();
-    visited.at(front) = true;
-    queue.pop();
+  // while (!queue.empty()) {
+  //   unsigned int front = queue.front();
+  //   visited.at(front) = true;
+  //   queue.pop();
     
-    std::vector<unsigned int> path = djikstra(source, front);
-    std::pair<unsigned int, std::vector<unsigned int>> pair = {source, path};
-    connections.insert(pair);
+  //   std::vector<unsigned int> path = dijkstra(source, front);
+  //   std::pair<unsigned int, std::vector<unsigned int>> pair = {source, path};
+  //   connections.insert(pair);
 
-    std::set<unsigned int> front_neighbors = nodes_.at(front).neighbors_;
-    std::set<unsigned int>::iterator it;
-    for (it = front_neighbors.begin(); it != front_neighbors.end(); it++) {
-      if (!(visited.at(*it))) {
-        visited.at(*it) = true;
-        queue.push(*it);
-      }
-    }
-   
+  //   std::set<unsigned int> front_neighbors = nodes_.at(front).neighbors_;
+  //   std::set<unsigned int>::iterator it;
+  //   for (it = front_neighbors.begin(); it != front_neighbors.end(); it++) {
+  //     if (!(visited.at(*it))) {
+  //         visited.at(*it) = true;
+  //         queue.push(*it);
+  //     }
+  //   }
+  // }
+
+  for (unsigned int i = 0; i < nodes_.size(); i++) {
+    auto path = dijkstra(source, i);
+    connections[i] = path;
   }
 
   return connections;

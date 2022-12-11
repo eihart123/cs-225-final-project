@@ -19,6 +19,21 @@ public:
   struct Node {
     std::set<unsigned int> neighbors_;
   };
+  struct NodeComparator {
+    unsigned int id = 0;
+    int distance = 0;
+
+    NodeComparator(unsigned int i, unsigned int d) {
+      id = i;
+      distance = d;
+    }
+    bool operator<(const NodeComparator& other) const {
+      return (distance < other.distance) || (distance == other.distance && id < other.id);
+    }
+    bool operator>(const NodeComparator& other) const {
+      return (distance > other.distance) || (distance == other.distance && id > other.id);
+    }
+  };
   /**
    * @brief Construct a new MusaeGraph object
    * 
@@ -71,8 +86,8 @@ public:
   *
   * @return Vector of sets containing nodes up to degree-th degree of connection
   */
-  std::vector<unsigned int> djikstra(unsigned source, unsigned destination);
-  std::map<unsigned int, std::vector<unsigned int>> djikstra(unsigned int source) const;
+  std::vector<unsigned int> dijkstra(unsigned source, unsigned destination) const;
+  std::map<unsigned int, std::vector<unsigned int>> dijkstra(unsigned int source) const;
 
   /**
   * @brief Use Djikstra's algorithm to find shortest path between two given nodes
