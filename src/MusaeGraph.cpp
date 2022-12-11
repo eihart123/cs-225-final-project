@@ -71,6 +71,10 @@ void MusaeGraph::insertEdge(unsigned int id_1, unsigned int id_2) {
   num_nodes_ = nodes_.size();
 }
 
+std::set<unsigned> MusaeGraph::getNeighbors(unsigned user_id) const {
+  return nodes_[user_id].neighbors_;
+}
+
 std::string MusaeGraph::getUsername(unsigned int user_id) const {
   if (user_id >= usernames_.size()) {
     std::string error_msg = "invalid user id: " + std::to_string(user_id);
@@ -130,58 +134,81 @@ std::map<unsigned int, std::vector<unsigned int>> MusaeGraph::bfs_traversal(unsi
   return map;
 }
 
-// std::map<MusaeGraph::Node, unsigned int> MusaeGraph::djikstra(Node source) const {
-//   // TODO: complete implementation
+std::vector<unsigned int> MusaeGraph::djikstra(unsigned source, unsigned destination) {
 
-//   std::map<Node, unsigned int> dist;
-//   std::map<Node, Node> prev;
+  std::vector<unsigned int> distance;
+  std::vector<bool> visited;
+  std::vector<unsigned int> path;
+  for (unsigned user_id = 0; user_id < nodes_.size(); user_id++) {
+    if (user_id == source) {
+      distance[user_id] = 0;
+    } else {
+      distance[user_id] = 10000000;
+    }
+    visited[user_id] = false;
+  }
 
-//   // foreach (Vertex v : G):
-//   for (Node node : nodes_) {
-//     //   d[v] = +inf
-//     dist[node] = INT_MAX;
-//     //   p[v] = NULL
-//     prev[node] = NULL;
-//   }
-//   //   d[s] = 0
-//   int dist[source] = 0;
+  for (unsigned id = 0; id < nodes_.size(); id++) {
+    int min, index = 10000000;
+
+    for (unsigned id = 0; id < nodes_.size(); id++) {
+      if (visited[id] == false && distance[id] < min) {
+        min = distance[id];
+        index = id;
+      }
+    }
+    visited[user_id] = true;
+    for (unsigned id = 0; id < nodes_.size(); id++) {
+      if (visited[id] == false && ) {
+        
+      }
+    }
+   
+  }
+
+  return path;
+}
 
 //   // PriorityQueue Q // min distance, defined by d[v]
 //   priority_queue<Node> p_queue;
 
-//   //   Q.buildHeap(G.vertices())
-//   p_queue.buildHeap(nodes_);
 
-//   //   Graph T // "labeled set"
-//   std::set<Node> labeled_set;
+std::map<unsigned int, std::vector<unsigned int>> MusaeGraph::djikstra(unsigned int source) const {
+  std::map<unsigned int, std::vector<unsigned int>> connections;
 
-//   //   repeat n times:
-//   while (!p_queue.empty()) {
-//     //   Vertex u = Q.removeMin()
-//     Node curr = p_queue.removeMin();
+  std::queue<unsigned int> queue;
+  std::vector<unsigned int> visited;
+  visited.resize(nodes_.size(), false);
+  queue.push(source);
+  
+  while (!queue.empty()) {
+    unsigned int front = queue.front();
+    visited.at(front) = true;
+    queue.pop();
+    
+    std::vector<unsigned int> path = djikstra(source, front);
+    std::pair<unsigned int, std::vector<unsigned int>> pair = {source, path};
+    connections.insert(pair);
 
-//     //   T.add(u)
-//     labeled_set.add(curr);
+    std::set<unsigned int> front_neighbors = nodes_.at(front).neighbors_;
+    std::set<unsigned int>::iterator it;
+    for (it = front_neighbors.begin(); it != front_neighbors.end(); it++) {
+      if (!(visited.at(*it))) {
+        visited.at(*it) = true;
+        queue.push(*it);
+      }
+    }
+   
+  }
 
-//     //   foreach (Vertex v : neighbors of u not in T):
-//     for (Node node : curr.neighbors_) {
-//       //   if cost(v, m) < d[v]:
-//       if (dist[curr] + cost(curr, node) < dist[node]) {
-//         //   d[v] = cost(v, m)
-//         dist[node] = cost(curr, node)
-//         //   p[v] = m
-//         prev[node] = curr;
-//       }
-//     }
-//   }
-//   return dist;
-// }
-
-unsigned int MusaeGraph::findShortestPath(Node source, Node destination) const {
-  // TODO: implement
-  // std::map<Node, unsigned int> connections = djikstra(source);
-  return 1;
+  return connections;
 }
+
+// unsigned int MusaeGraph::findShortestPath(Node source, Node destination) const {
+//   // TODO: implement
+//   // std::map<Node, unsigned int> connections = djikstra(source);
+//   return 1;
+// }
 
 std::map<unsigned int, unsigned int> MusaeGraph::getRecommendedUsersToFollow(unsigned int user_id, unsigned int max_degree, int request_connection_count) const {
   if (max_degree <= 1) {

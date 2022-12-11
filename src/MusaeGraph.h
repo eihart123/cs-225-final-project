@@ -51,6 +51,13 @@ public:
   unsigned int getCountNodes() const;
 
   /**
+   * @brief Get the neighbors of a given user node
+   * 
+   * @return Set of unsigned integers representing neighbors of a node
+   */
+  std::set<unsigned> getNeighbors(unsigned user_id) const;
+
+  /**
    * @brief 
    * 
    * @param user 
@@ -64,7 +71,8 @@ public:
   *
   * @return Vector of sets containing nodes up to degree-th degree of connection
   */
-  std::map<Node, unsigned int> djikstra(Node source) const;
+  std::vector<unsigned int> djikstra(unsigned source, unsigned destination);
+  std::map<unsigned int, std::vector<unsigned int>> djikstra(unsigned int source) const;
 
   /**
   * @brief Use Djikstra's algorithm to find shortest path between two given nodes
