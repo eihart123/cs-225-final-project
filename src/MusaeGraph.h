@@ -109,31 +109,35 @@ public:
   // GIRVAN-NEWMAN IMPLEMENTATION
 
   /**
-   * @brief Calculates the betweenness centrality for each edge in a graph
+   * @brief Helper function that calculates the betweenness centrality for each edge in a graph
    * 
    * @param nodes A reference to the graph adjacency list to use
-   * @param edges A reference to a map of edges and their centrality
-   * @return 0 if all edges are connected, n for number of edges that could not be computed for shortest path because it is now impossible
+   * @return 0 if all edges are connected, n number of edges that could not be computed for shortest path because it is now impossible
    */
-  int betweennessCentrality(std::vector<Node>& nodes, std::map<std::string, unsigned int>& edges);
+  int betweennessCentrality(std::vector<Node>& nodes);
 
   /**
-   * @brief Called after betweenness centrality is computed: remove the edge with the highest centrality
+   * @brief Helper function that remove the edge with the highest centrality
    * 
    * @param nodes A reference to the graph adjacency list to use
-   * @param edges A reference to a map of edges and their centrality
    */
-  void removeEdgeByCentrality(std::vector<Node>& nodes, std::map<std::string, unsigned int>& edges);
+  void removeEdgeByCentrality(std::vector<Node>& nodes);
 
   /**
-   * @brief Implementation of Girvan-Newman algorithm. Runs until two communites are created
+   * @brief Implementation of Girvan-Newman algorithm. Runs until two disjoint are created
    * 
-   * @return std::vector<std::vector<unsigned int>> 
+   * @return An adjacency list of the resulting graph
    */
-  std::vector<std::vector<unsigned int>> girvan();
-
-  std::vector<std::vector<unsigned int>> formatCommunities(std::vector<Node>& nodes);
+  std::vector<Node> girvan();
   
+  /**
+   * @brief Uses Girvan-Newman to split the graph into two distinct communities
+   * 
+   * @return A vector containing vectors (communites) and their user IDs
+   */
+  std::vector<std::vector<unsigned int>> calculateCommunities();
+
+
 private:
   /**
    * @brief Helper function to insert an edge to build the adjacency list
@@ -142,6 +146,23 @@ private:
    * @param id_2 The second node in the edge
    */
   void insertEdge(unsigned int id_1, unsigned int id_2);
+
+  /**
+   * @brief Helper function to create edge name string for edges_
+   * 
+   * @param id_1 
+   * @param id_2 
+   * @return std::string Computed edge name, in format "number-number", where the first number is the lowest id of the passed arguments
+   */
+  std::string makeEdgeName(unsigned int id_1, unsigned int id_2) {
+    std::string edge_name;
+    if (id_1 < id_2) {
+      edge_name = std::to_string(id_1) + "-" + std::to_string(id_2);
+    } else {
+      edge_name = std::to_string(id_2) + "-" + std::to_string(id_1);
+    }
+    return edge_name;
+  }
 
   unsigned int num_edges_;
   unsigned int num_nodes_;

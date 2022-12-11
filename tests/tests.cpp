@@ -187,7 +187,7 @@ TEST_CASE("test2_bfs_degree3", "[weight=15], [test=2], [bfs]") {
 
 // Dijkstra Test Cases
 
-TEST_CASE("test2_dijkstra_3connections", "[weight=20], [test=1], [dijkstra]") {
+TEST_CASE("test2_dijkstra_3connections", "[weight=20], [test=2], [dijkstra]") {
   std::string edges_csv = "../tests/test2_edges.csv";
   std::string target_csv = "../tests/test2_target.csv";
   std::string features_json = "../tests/test2_features.json";
@@ -215,7 +215,7 @@ TEST_CASE("test2_dijkstra_3connections", "[weight=20], [test=1], [dijkstra]") {
 
 }
 
-TEST_CASE("test2_dijkstra_4connections", "[weight=20], [test=1], [dijkstra]") {
+TEST_CASE("test2_dijkstra_4connections", "[weight=20], [test=2], [dijkstra]") {
   std::string edges_csv = "../tests/test2_edges.csv";
   std::string target_csv = "../tests/test2_target.csv";
   std::string features_json = "../tests/test2_features.json";
@@ -239,7 +239,7 @@ TEST_CASE("test2_dijkstra_4connections", "[weight=20], [test=1], [dijkstra]") {
 
 // Test All Nodes for Dijkstras
 
-TEST_CASE("test2_bigdijkstra", "[weight=20], [test=1], [dijkstra]") {
+TEST_CASE("test2_bigdijkstra", "[weight=20], [test=2], [dijkstra]") {
   std::string edges_csv = "../tests/testallnodes_edges.csv";
   std::string target_csv = "../tests/testallnodes_target.csv";
   std::string features_json = "../tests/testallnodes_features.json";
@@ -272,27 +272,55 @@ TEST_CASE("test2_bigdijkstra", "[weight=20], [test=1], [dijkstra]") {
 
 // Girvan-Newman Algorithm Test Cases
 
-// TEST_CASE("testallnodes_girvan-newman", "[weight=20], [test=1], [girvan-newman]") {
-//   std::string edges_csv = "../tests/testallnodes_edges.csv";
-//   std::string target_csv = "../tests/testallnodes_target.csv";
-//   std::string features_json = "../tests/testallnodes_features.json";
-//   MusaeGraph m(edges_csv, target_csv, features_json);
+TEST_CASE("testallnodes_girvan-newman", "[weight=20], [test-all], [girvan-newman]") {
+  std::string edges_csv = "../tests/testallnodes_edges.csv";
+  std::string target_csv = "../tests/testallnodes_target.csv";
+  std::string features_json = "../tests/testallnodes_features.json";
+  MusaeGraph m(edges_csv, target_csv, features_json);
 
-//   std::vector<std::vector<unsigned>> communities = girvanNewman();
+  std::vector<MusaeGraph::Node> n = m.girvan();
 
-//   // test for connections we still want to exist
-//   REQUIRE(getNeighbors(0).count(5));
-//   REQUIRE(getNeighbors(1).count(3));
-//   REQUIRE(getNeighbors(2).count(4));
-//   REQUIRE(getNeighbors(3).count(1));
-//   REQUIRE(getNeighbors(4).count(2));
-//   REQUIRE(getNeighbors(4).count(5));
-//   REQUIRE(getNeighbors(5).count(5));
+  // test for connections we still want to exist
+  REQUIRE(n[0].neighbors_.count(5));
+  REQUIRE(n[1].neighbors_.count(3));
+  REQUIRE(n[2].neighbors_.count(4));
+  REQUIRE(n[3].neighbors_.count(1));
+  REQUIRE(n[4].neighbors_.count(2));
+  REQUIRE(n[4].neighbors_.count(5));
+  REQUIRE(n[5].neighbors_.count(0));
 
-//   // test for connections we no longer want to exist
-//   REQUIRE(!getNeighbors(3).count(4));
-//   REQUIRE(!getNeighbors(4).count(3));
-// }
+  // test for connections we no longer want to exist
+  REQUIRE(!n[3].neighbors_.count(4));
+  REQUIRE(!n[4].neighbors_.count(3));
+}
+
+TEST_CASE("testallnodes_girvan-newman2", "[weight=20], [test-all], [girvan-newman]") {
+  std::string edges_csv = "../tests/test_girvan_edges.csv";
+  std::string target_csv = "../tests/test_girvan_target.csv";
+  std::string features_json = "../tests/test_girvan_features.json";
+  MusaeGraph m(edges_csv, target_csv, features_json);
+
+  std::vector<MusaeGraph::Node> n = m.girvan();
+
+  // test for connections we still want to exist
+  REQUIRE(n[1].neighbors_.count(2));
+  REQUIRE(n[3].neighbors_.count(4));
+  REQUIRE(n[3].neighbors_.count(1));
+  REQUIRE(n[2].neighbors_.count(4));
+
+  REQUIRE(n[6].neighbors_.count(5));
+  REQUIRE(n[7].neighbors_.count(8));
+  REQUIRE(n[8].neighbors_.count(6));
+  REQUIRE(n[5].neighbors_.count(7));
+  
+  
+
+  // test for connections we no longer want to exist
+  REQUIRE(!n[1].neighbors_.count(5));
+  REQUIRE(!n[5].neighbors_.count(1));
+  REQUIRE(!n[4].neighbors_.count(8));
+  REQUIRE(!n[8].neighbors_.count(4));
+}
 
 
 // TEST_CASE("bfs_test_2_degree5", "[weight=15], [bfs]") {

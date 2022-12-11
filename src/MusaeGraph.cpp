@@ -198,36 +198,10 @@ std::vector<unsigned int> MusaeGraph::dijkstra(unsigned source, unsigned destina
 
 std::map<unsigned int, std::vector<unsigned int>> MusaeGraph::dijkstra(unsigned int source) const {
   std::map<unsigned int, std::vector<unsigned int>> connections;
-
-  // std::queue<unsigned int> queue;
-  // std::vector<unsigned int> visited;
-  // visited.resize(nodes_.size(), false);
-  // queue.push(source);
-  
-  // while (!queue.empty()) {
-  //   unsigned int front = queue.front();
-  //   visited.at(front) = true;
-  //   queue.pop();
-    
-  //   std::vector<unsigned int> path = dijkstra(source, front);
-  //   std::pair<unsigned int, std::vector<unsigned int>> pair = {source, path};
-  //   connections.insert(pair);
-
-  //   std::set<unsigned int> front_neighbors = nodes_.at(front).neighbors_;
-  //   std::set<unsigned int>::iterator it;
-  //   for (it = front_neighbors.begin(); it != front_neighbors.end(); it++) {
-  //     if (!(visited.at(*it))) {
-  //         visited.at(*it) = true;
-  //         queue.push(*it);
-  //     }
-  //   }
-  // }
-
   for (unsigned int i = 0; i < nodes_.size(); i++) {
     auto path = dijkstra(source, i);
     connections[i] = path;
   }
-
   return connections;
 }
 
@@ -295,45 +269,44 @@ std::map<unsigned int, unsigned int> MusaeGraph::getRecommendedUsersToFollow(uns
   return random_users;
 }
 
-int MusaeGraph::betweennessCentrality(std::vector<Node>& nodes, std::map<std::string, unsigned int>& edges) {
+int MusaeGraph::betweennessCentrality(std::vector<Node>& nodes) {
   int num_bad_edges = 0;
   // reset centrality (shortest path count) for all edges
-  for (auto e : edges) {
-    edges[e.first] = 0;
+  for (auto e : edges_) {
+    edges_[e.first] = 0;
   }
   // iterate through every node
-  for (unsigned int i = 0; i < nodes.size(); i++) {
-    for (unsigned int j = 0; j < nodes.size(); j++) {
+  for (unsigned int i = 0; i < nodes_.size(); i++) {
+    for (unsigned int j = 0; j < nodes_.size(); j++) {
       if (i == j) {
         continue;
       }
-      // std::vector<unsigned int> path = findShortestPath();
-      std::vector<unsigned int> path;
+      std::vector<unsigned int> path = dijkstra(i, j);
       // if the path size is 0, then no shortest path could be found, which means that the two nodes are in disjoint graphs
       if (path.size() == 0) {
         num_bad_edges += 1;
       }
       // for each edge in the path
-      for (unsigned int k = 0; k < path.size() - 1; k++) {
-        std::string edge_name = makeEdgeName(path[k], path[k+1]);
+      for (unsigned int k = 1; k < path.size(); k++) {
+        std::string edge_name = makeEdgeName(path.at(k-1), path.at(k));
         // add 1 to the centrality of the edge (since there is a shortest path using the edge)
-        edges[edge_name] += 1;
+        edges_[edge_name] += 1;
       }
     }
   }
   return (num_bad_edges); // divided by 2 because we process each node undirected (however this does not guarantee the same sortest path)
 }
 
-void MusaeGraph::removeEdgeByCentrality(std::vector<Node>& nodes, std::map<std::string, unsigned int>& edges) {
+void MusaeGraph::removeEdgeByCentrality(std::vector<Node>& nodes) {
   // initializes the max with the first string in the map of edges
   std::string max_edge;
-  for (auto i : edges) {
+  for (auto i : edges_) {
     max_edge = i.first;
     break;
   }
   // iterates through the map of edges and finds the edge with the highest betweenness centrality and sets it to max_edge
-  for (auto i : edges) {
-    if (edges.at(max_edge) < i.second) {
+  for (auto i : edges_) {
+    if (edges_.at(max_edge) < i.second) {
       max_edge = i.first;
     }
   }
@@ -343,43 +316,50 @@ void MusaeGraph::removeEdgeByCentrality(std::vector<Node>& nodes, std::map<std::
   std::stringstream ss(max_edge);
   std::getline(ss, node1, '-');
   std::getline(ss, node2, '-');
+  std::cout << "=============" << std::endl;
+  std::cout << "Node 1: " << node1 << std::endl;
+  std::cout << "Node 2: " << node2 << std::endl;
   unsigned int n1 = std::stoi(node1);
   unsigned int n2 = std::stoi(node2);
   // std::set<unsigned int> neighbors1 = nodes[n1].neighbors_;
   // std::set<unsigned int> neighbors2 = nodes[n2].neighbors_;
 
   // removes the node from each neighbor set
-  if (nodes[n1].neighbors_.find(n2) == nodes[n1].neighbors_.end() ||
-      nodes[n2].neighbors_.find(n1) == nodes[n2].neighbors_.end()) {
-    throw std::invalid_argument("nodes reference did not match edges reference");
+  if (nodes_[n1].neighbors_.find(n2) == nodes_[n1].neighbors_.end() ||
+      nodes_[n2].neighbors_.find(n1) == nodes_[n2].neighbors_.end()) {
+    throw std::invalid_argument("Attempted to remove non-existent neighbors in nodes_");
   }
-  nodes[n1].neighbors_.erase(nodes[n1].neighbors_.find(n2));
-  nodes[n2].neighbors_.erase(nodes[n1].neighbors_.find(n1));
+  nodes_[n1].neighbors_.erase(nodes_[n1].neighbors_.find(n2));
+  nodes_[n2].neighbors_.erase(nodes_[n2].neighbors_.find(n1));
 
   // removed the edge from the map of edges
-  edges.erase(edges.find(max_edge));
+  // std::cout << "edges_ size before: " << std::to_string(edges_.size()) << std::endl;
+  // edges_.erase(edges_.find(max_edge));
+  // std::cout << "edges_ size after: " << std::to_string(edges.size()) << std::endl;
 }
 
-std::vector<std::vector<unsigned int>> MusaeGraph::girvan() {
+std::vector<MusaeGraph::Node> MusaeGraph::girvan() {
   // initialize variables to use
   // make a deep copy of nodes_
   std::vector<Node> nodes;
-  std::map<std::string, unsigned int>& edges = edges_;
+  // std::map<std::string, unsigned int>& edges = edges_;
   for (unsigned int i = 0; i < nodes_.size(); i++) {
     Node temp;
     temp.neighbors_ = nodes_.at(i).neighbors_;
     nodes.push_back(temp);
   }
   // end initialization
-  unsigned int betweenness_status = betweennessCentrality(nodes, edges);;
+  unsigned int betweenness_status = betweennessCentrality(nodes);;
   while (betweenness_status == 0) {
-    removeEdgeByCentrality(nodes, edges);
-    betweenness_status = betweennessCentrality(nodes, edges);
+    std::cout << "edges_ size: " << std::to_string(edges_.size()) << std::endl;
+    removeEdgeByCentrality(nodes);
+    betweenness_status = betweennessCentrality(nodes);
   }
-  return formatCommunities(nodes);
+  return nodes;
 }
 
-std::vector<std::vector<unsigned int>> MusaeGraph::formatCommunities(std::vector<Node>& nodes) {
+std::vector<std::vector<unsigned int>> MusaeGraph::calculateCommunities() {
+  std::vector<Node> nodes = girvan();
   // std::map<unsigned int, std::vector<unsigned int>> bfs = bfs_traversal()
   std::vector<std::vector<unsigned int>> returnVect;
   std::set<unsigned int> firstSet;
@@ -424,22 +404,4 @@ std::vector<std::vector<unsigned int>> MusaeGraph::formatCommunities(std::vector
     }
   }
   return returnVect;
-}
-
-
-/**
- * @brief Helper function to create edge name string for edges_
- * 
- * @param id_1 
- * @param id_2 
- * @return std::string Computed edge name, in format "number-number", where the first number is the lowest id of the passed arguments
- */
-std::string makeEdgeName(unsigned int id_1, unsigned int id_2) {
-  std::string edge_name;
-  if (id_1 < id_2) {
-    edge_name = std::to_string(id_1) + "-" + std::to_string(id_2);
-  } else {
-    edge_name = std::to_string(id_2) + "-" + std::to_string(id_1);
-  }
-  return edge_name;
 }
