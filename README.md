@@ -12,4 +12,17 @@
 
 ### Running Instructions ###
 
-1. 
+#### Building Executable
+
+**Creating build file**
+1. In the base directory of the repository run "mkdir build"
+2. Then run "cd ./build"
+3. Next run "cmake .." to initialize the build directory
+
+**Compiling and Running Test Cases
+1. To compile code for test cases run "make test" in the command terminal
+2. To run the test cases, run "./test
+
+**Compiling and Running main.cpp
+1. To compile code for main.cpp run "make" in the command terminal
+2. To run main.cpp, run "./main
