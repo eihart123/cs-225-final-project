@@ -9,3 +9,7 @@
 3. **Code** Our primary code is inside our ./src folder. This folder contains ./MusaeGraph.h which is our header file for our graph implementation and it contains our graph class, MusaeGraph and all its declarations. This folder also contains ./Musaegraph.cpp which is our cpp file for our graph implementation and contains the definitions for our graph class, MusaeGraph.
 
 4. **Written Report** Our written report is located in the project directory and is the ./results.md file.
+
+### Running Instructions ###
+
+1. 
