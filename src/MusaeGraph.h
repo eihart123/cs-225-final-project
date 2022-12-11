@@ -54,14 +54,14 @@ public:
   /**
    * @brief Get the number of edges
    * 
-   * @return Unsigned integer represnting number of edges
+   * @return Unsigned integer representing number of edges
    */
   unsigned int getCountEdges() const;
 
   /**
    * @brief Get the number of nodes
    * 
-   * @return Unsigned integer represnting number of nodes
+   * @return Unsigned integer representing number of nodes
    */
   unsigned int getCountNodes() const;
 
@@ -106,7 +106,33 @@ public:
    */
   std::map<unsigned int, unsigned int> getRecommendedUsersToFollow(unsigned int user_id, unsigned int max_degree, int request_connection_count) const;  
 
-  // TODO: Implement Girvan_Newman to view generated communities
+  // GIRVAN-NEWMAN IMPLEMENTATION
+
+  /**
+   * @brief Calculates the betweenness centrality for each edge in a graph
+   * 
+   * @param nodes A reference to the graph adjacency list to use
+   * @param edges A reference to a map of edges and their centrality
+   * @return 0 if all edges are connected, n for number of edges that could not be computed for shortest path because it is now impossible
+   */
+  int betweennessCentrality(std::vector<Node>& nodes, std::map<std::string, unsigned int>& edges);
+
+  /**
+   * @brief Called after betweenness centrality is computed: remove the edge with the highest centrality
+   * 
+   * @param nodes A reference to the graph adjacency list to use
+   * @param edges A reference to a map of edges and their centrality
+   */
+  void removeEdgeByCentrality(std::vector<Node>& nodes, std::map<std::string, unsigned int>& edges);
+
+  /**
+   * @brief Implementation of Girvan-Newman algorithm. Runs until two communites are created
+   * 
+   * @return std::vector<std::vector<unsigned int>> 
+   */
+  std::vector<std::vector<unsigned int>> girvan();
+
+  std::vector<std::vector<unsigned int>> formatCommunities(std::vector<Node>& nodes);
   
 private:
   /**
@@ -121,6 +147,10 @@ private:
   unsigned int num_nodes_;
   std::vector<Node> nodes_;
   std::vector<std::string> usernames_;
+  // edges_ vector used only for Girvan-Newman
+  // second is sp_count (number of shortet paths)
+  std::map<std::string, unsigned int> edges_;
+  
 };
 
 #endif
