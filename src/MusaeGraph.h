@@ -64,7 +64,7 @@ public:
   *
   * @return Vector of sets containing nodes up to degree-th degree of connection
   */
-  std::map<Node, unsigned int> djikstra(Node source) const;
+  std::list<MusaeGraph::Node> MusaeGraph::djikstra(Node source, Node destination);
 
   /**
   * @brief Use Djikstra's algorithm to find shortest path between two given nodes
