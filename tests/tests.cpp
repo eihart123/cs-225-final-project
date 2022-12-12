@@ -4,7 +4,11 @@
 
 // Tests for MusaeGraph::getRecommendedUsersToFollow() can be found in main.cpp
 
-// TEST 1
+/*
+============================================
+TEST 1
+============================================
+*/
 
 TEST_CASE("test1_edge_and_node_counts", "[weight=20], [test=1], [construct]") {
   std::string edges_csv = "../tests/test1_edges.csv";
@@ -16,18 +20,32 @@ TEST_CASE("test1_edge_and_node_counts", "[weight=20], [test=1], [construct]") {
   REQUIRE(m.getCountNodes() == 10);
 }
 
-TEST_CASE("test1_get_username", "[weight=20], [test=1], [construct]") {
+TEST_CASE("test1_getUsernameFromId", "[weight=20], [test=1], [construct]") {
   std::string edges_csv = "../tests/test1_edges.csv";
   std::string target_csv = "../tests/test1_target.csv";
   std::string features_json = "../tests/test1_features.json";
   MusaeGraph m(edges_csv, target_csv, features_json);
 
-  REQUIRE(m.getUsername(0) == "Zero");
-  REQUIRE(m.getUsername(1) == "One");
-  REQUIRE(m.getUsername(2) == "Two");
-  REQUIRE(m.getUsername(3) == "Three");
-  REQUIRE(m.getUsername(9) == "Nine");
-  REQUIRE(m.getUsername(8) == "Eight");
+  REQUIRE(m.getUsernameFromId(0) == "Zero");
+  REQUIRE(m.getUsernameFromId(1) == "One");
+  REQUIRE(m.getUsernameFromId(2) == "Two");
+  REQUIRE(m.getUsernameFromId(3) == "Three");
+  REQUIRE(m.getUsernameFromId(9) == "Nine");
+  REQUIRE(m.getUsernameFromId(8) == "Eight");
+}
+
+TEST_CASE("test1_getIdFromUsername", "[weight=20], [test=1], [construct]") {
+  std::string edges_csv = "../tests/test1_edges.csv";
+  std::string target_csv = "../tests/test1_target.csv";
+  std::string features_json = "../tests/test1_features.json";
+  MusaeGraph m(edges_csv, target_csv, features_json);
+
+  REQUIRE(m.getIdFromUsername("Zero") == 0);
+  REQUIRE(m.getIdFromUsername("One") == 1);
+  REQUIRE(m.getIdFromUsername("Two") == 2);
+  REQUIRE(m.getIdFromUsername("Three") == 3);
+  REQUIRE(m.getIdFromUsername("Nine") == 9);
+  REQUIRE(m.getIdFromUsername("Eight") == 8);
 }
 
 // BFS Test Cases
@@ -141,7 +159,11 @@ TEST_CASE("test1_dijkstra_2connections", "[weight=20], [test=1], [dijkstra]") {
   REQUIRE(dijkstra == correct3_2connections);
 }
 
-// TEST 2
+/*
+============================================
+TEST 2
+============================================
+*/
 
 TEST_CASE("test2_edge_and_node_counts", "[weight=15], [test=2]") {
   std::string edges_csv = "../tests/test2_edges.csv";
@@ -193,26 +215,11 @@ TEST_CASE("test2_dijkstra_3connections", "[weight=20], [test=2], [dijkstra]") {
   std::string features_json = "../tests/test2_features.json";
   MusaeGraph m(edges_csv, target_csv, features_json);
 
-  std::vector<unsigned int> dijkstra = m.dijkstra(4, 14);
   std::vector<unsigned int> correct1_3connections = {4, 7, 13, 14};
+  std::vector<unsigned int> correct2_3connections = {1, 2, 8, 15};
 
-  // REQUIRE(dijkstra.size() == 4);
-  REQUIRE(dijkstra == correct1_3connections);
-
-  dijkstra = m.dijkstra(1, 15);
-  // std::vector<unsigned int> correct2_3connections1 = {1, 5, 8, 15};
-  std::vector<unsigned int> correct2_3connections2 = {1, 2, 8, 15};
-  // std::vector<unsigned int> correct2_3connections3 = {1, 9, 11, 15};
-
-  REQUIRE(dijkstra.size() == 4);
-
-  bool check = false;
-  // if (dijkstra == correct2_3connections1 || dijkstra == correct2_3connections2 || dijkstra == correct2_3connections3) {
-  //   check = true;
-  // }
-
-  REQUIRE(dijkstra == correct2_3connections2);
-
+  REQUIRE(m.dijkstra(4, 14) == correct1_3connections);
+  REQUIRE(m.dijkstra(1, 15) == correct2_3connections);
 }
 
 TEST_CASE("test2_dijkstra_4connections", "[weight=20], [test=2], [dijkstra]") {
@@ -221,66 +228,57 @@ TEST_CASE("test2_dijkstra_4connections", "[weight=20], [test=2], [dijkstra]") {
   std::string features_json = "../tests/test2_features.json";
   MusaeGraph m(edges_csv, target_csv, features_json);
 
-  std::vector<unsigned int> dijkstra = m.dijkstra(1, 14);
-  // std::vector<unsigned int> correct1_4connections1 = {1, 4, 7, 13, 14};
-  // std::vector<unsigned int> correct1_4connections2 = {1, 4, 16, 13, 14};
-  std::vector<unsigned int> correct1_4connections3 = {1, 3, 7, 13, 14};
-
-  REQUIRE(dijkstra.size() == 5);
-
-  bool check = false;
-  // if (dijkstra == correct1_4connections1 || dijkstra == correct1_4connections2 || dijkstra == correct1_4connections3) {
-  //   check = true;
-  // }
-  
-  REQUIRE(dijkstra == correct1_4connections3);
-
+  std::vector<unsigned int> correct1_4connections = {1, 3, 7, 13, 14};
+  REQUIRE(m.dijkstra(1, 14) == correct1_4connections);
 }
 
-// Test All Nodes for Dijkstras
+/*
+============================================
+TEST 3
+============================================
+*/
 
-TEST_CASE("test2_bigdijkstra", "[weight=20], [test=2], [dijkstra]") {
-  std::string edges_csv = "../tests/testallnodes_edges.csv";
-  std::string target_csv = "../tests/testallnodes_target.csv";
-  std::string features_json = "../tests/testallnodes_features.json";
+TEST_CASE("test3_bigdijkstra", "[weight=20], [test=3], [dijkstra]") {
+  std::string edges_csv = "../tests/test3_edges.csv";
+  std::string target_csv = "../tests/test3_target.csv";
+  std::string features_json = "../tests/test3_features.json";
   MusaeGraph m(edges_csv, target_csv, features_json);
 
   std::map<unsigned int, std::vector<unsigned int>> dijkstra = m.dijkstra(1);
 
-  std::vector<unsigned int> correct1_big = {1};
-  std::vector<unsigned int> correct3_big = {1, 3};
-  std::vector<unsigned int> correct4_big = {1, 3, 4}; 
-  std::vector<unsigned int> correct2_big = {1, 3, 4, 2};
-  std::vector<unsigned int> correct5_big = {1, 3, 4, 5};
   std::vector<unsigned int> correct0_big = {1, 3, 4, 5, 0};
+  std::vector<unsigned int> correct1_big = {1};
+  std::vector<unsigned int> correct2_big = {1, 3, 4, 2};
+  std::vector<unsigned int> correct3_big = {1, 3};
+  std::vector<unsigned int> correct4_big = {1, 3, 4};
+  std::vector<unsigned int> correct5_big = {1, 3, 4, 5};
 
+  std::vector<unsigned int> result0_big = dijkstra[0];
   std::vector<unsigned int> result1_big = dijkstra[1];
+  std::vector<unsigned int> result2_big = dijkstra[2];
   std::vector<unsigned int> result3_big = dijkstra[3];
   std::vector<unsigned int> result4_big = dijkstra[4];
-  std::vector<unsigned int> result2_big = dijkstra[2];
   std::vector<unsigned int> result5_big = dijkstra[5];
-  std::vector<unsigned int> result0_big = dijkstra[0];
   
+  REQUIRE(result0_big == correct0_big);
   REQUIRE(result1_big == correct1_big);
+  REQUIRE(result2_big == correct2_big);
   REQUIRE(result3_big == correct3_big);
   REQUIRE(result4_big == correct4_big);
-  REQUIRE(result2_big == correct2_big);
   REQUIRE(result5_big == correct5_big);
-  REQUIRE(result0_big == correct0_big);
-
 }
 
-// Girvan-Newman Algorithm Test Cases
+// Girvan-Newman Test Cases
 
-TEST_CASE("testallnodes_girvan-newman", "[weight=20], [test-all], [girvan-newman]") {
-  std::string edges_csv = "../tests/testallnodes_edges.csv";
-  std::string target_csv = "../tests/testallnodes_target.csv";
-  std::string features_json = "../tests/testallnodes_features.json";
+TEST_CASE("test3_girvan", "[weight=20], [test=3], [girvan]") {
+  std::string edges_csv = "../tests/test3_edges.csv";
+  std::string target_csv = "../tests/test3_target.csv";
+  std::string features_json = "../tests/test3_features.json";
   MusaeGraph m(edges_csv, target_csv, features_json);
 
   std::vector<MusaeGraph::Node> n = m.girvan();
 
-  // test for connections we still want to exist
+  // Test for connections we still want to exist
   REQUIRE(n[0].neighbors_.count(5));
   REQUIRE(n[1].neighbors_.count(3));
   REQUIRE(n[2].neighbors_.count(4));
@@ -289,32 +287,43 @@ TEST_CASE("testallnodes_girvan-newman", "[weight=20], [test-all], [girvan-newman
   REQUIRE(n[4].neighbors_.count(5));
   REQUIRE(n[5].neighbors_.count(0));
 
-  // test for connections we no longer want to exist
+  // Test for connections we no longer want to exist
   REQUIRE(!n[3].neighbors_.count(4));
   REQUIRE(!n[4].neighbors_.count(3));
 }
 
-TEST_CASE("testallnodes_girvan-newman2", "[weight=20], [test-all], [girvan-newman]") {
-  std::string edges_csv = "../tests/test_girvan_edges.csv";
-  std::string target_csv = "../tests/test_girvan_target.csv";
-  std::string features_json = "../tests/test_girvan_features.json";
+/*
+============================================
+TEST 4
+============================================
+*/
+
+TEST_CASE("test4_girvan", "[weight=20], [test=4], [girvan]") {
+  std::string edges_csv = "../tests/test4_edges.csv";
+  std::string target_csv = "../tests/test4_target.csv";
+  std::string features_json = "../tests/test4_features.json";
   MusaeGraph m(edges_csv, target_csv, features_json);
 
   std::vector<MusaeGraph::Node> n = m.girvan();
 
   // test for connections we still want to exist
   REQUIRE(n[1].neighbors_.count(2));
-  REQUIRE(n[3].neighbors_.count(4));
+  REQUIRE(n[2].neighbors_.count(1));
+  REQUIRE(n[1].neighbors_.count(3));
   REQUIRE(n[3].neighbors_.count(1));
   REQUIRE(n[2].neighbors_.count(4));
-
+  REQUIRE(n[4].neighbors_.count(2));
+  REQUIRE(n[3].neighbors_.count(4));
+  REQUIRE(n[4].neighbors_.count(3));
+  REQUIRE(n[5].neighbors_.count(6));
   REQUIRE(n[6].neighbors_.count(5));
-  REQUIRE(n[7].neighbors_.count(8));
-  REQUIRE(n[8].neighbors_.count(6));
   REQUIRE(n[5].neighbors_.count(7));
+  REQUIRE(n[7].neighbors_.count(5));
+  REQUIRE(n[6].neighbors_.count(8));
+  REQUIRE(n[8].neighbors_.count(6));
+  REQUIRE(n[7].neighbors_.count(8));
+  REQUIRE(n[8].neighbors_.count(7));
   
-  
-
   // test for connections we no longer want to exist
   REQUIRE(!n[1].neighbors_.count(5));
   REQUIRE(!n[5].neighbors_.count(1));
@@ -322,58 +331,11 @@ TEST_CASE("testallnodes_girvan-newman2", "[weight=20], [test-all], [girvan-newma
   REQUIRE(!n[8].neighbors_.count(4));
 }
 
-
-// TEST_CASE("bfs_test_2_degree5", "[weight=15], [bfs]") {
-
-//   std::string edges_csv = "../tests/bfs_test2_edges.csv";
-//   std::string target_csv = "../tests/bfs_test1_target.csv";
-//   std::string features_json = "../tests/test1_features.json";
-//   MusaeGraph m(edges_csv, target_csv, features_json);
-
-  
-
-//   std::vector<std::set<unsigned int>> bfs = m.bfs_traversal(8, 5);
-
-
-
-//   REQUIRE(m.getCountEdges() == 22);
-//   REQUIRE(m.getCountNodes() == 14);
-
-
-  
-//   REQUIRE(bfs.at(0).size() == 3);
-//   REQUIRE(bfs.at(1).size() == 5);
-//   REQUIRE(bfs.at(2).size() == 3);
-//   REQUIRE(bfs.at(3).size() == 1);
-//   REQUIRE(bfs.at(4).size() == 1);
-
-
-
-//   REQUIRE(bfs.at(0).count(15) == 1);
-//   REQUIRE(bfs.at(0).count(2) == 1);
-//   REQUIRE(bfs.at(0).count(5) == 1);
-
-
-  
-
-//   REQUIRE(bfs.at(1).count(11) == 1);
-//   REQUIRE(bfs.at(1).count(9) == 1);
-//   REQUIRE(bfs.at(1).count(4) == 1);
-//   REQUIRE(bfs.at(1).count(1) == 1);
-//   REQUIRE(bfs.at(1).count(3) == 1);
-
-//   REQUIRE(bfs.at(2).count(12) == 1);
-//   REQUIRE(bfs.at(2).count(16) == 1);
-//   REQUIRE(bfs.at(2).count(7) == 1);
-  
-
-//   REQUIRE(bfs.at(3).count(13) == 1);
-//   REQUIRE(bfs.at(4).count(14) == 1);
-  
-  
-// }
-
-// MUSAE GITHUB DATASET
+/*
+============================================
+MUSAE GH DATASET
+============================================
+*/
 
 TEST_CASE("musae_gh_get_username", "[weight=10], [musae_gh], [construct]") {
   std::string edges_csv = "../data/git_web_ml/musae_git_edges.csv";
@@ -386,6 +348,6 @@ TEST_CASE("musae_gh_get_username", "[weight=10], [musae_gh], [construct]") {
   // skipped.
   unsigned int array_size = m.getCountNodes();
   for (unsigned int i = 0; i < array_size; ++i) {
-    REQUIRE(m.getUsername(i) != "");
+    REQUIRE(m.getUsernameFromId(i) != "");
   }
 }

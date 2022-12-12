@@ -11,14 +11,27 @@
 #include <set>
 #include <map>
 #include <queue>
+#include <bits/stdc++.h>
 
 #include <iostream>
 
+/**
+ * @brief A graph implementation for Musae datasets
+ * 
+ */
 class MusaeGraph {
 public:
+  /**
+   * @brief Node struct to keep track of neighbors and build adjacency list
+   * 
+   */
   struct Node {
     std::set<unsigned int> neighbors_;
   };
+  /**
+   * @brief NodeComparator struct for use with Dijkstra's
+   * 
+   */
   struct NodeComparator {
     unsigned int id = 0;
     int distance = 0;
@@ -28,10 +41,16 @@ public:
       distance = d;
     }
     bool operator<(const NodeComparator& other) const {
-      return (distance < other.distance) || (distance == other.distance && id < other.id);
+      return (
+        (distance < other.distance) || 
+        (distance == other.distance && id < other.id)
+      );
     }
     bool operator>(const NodeComparator& other) const {
-      return (distance > other.distance) || (distance == other.distance && id > other.id);
+      return (
+        (distance > other.distance) ||
+        (distance == other.distance && id > other.id)
+      );
     }
   };
   /**
@@ -39,25 +58,33 @@ public:
    * 
    * @param edges_csv The edges.csv file containing each edge, in format "id_1,id_2"
    * @param target_csv The target.csv file mapping IDs to usernames
-   * @param features_json The features.json file (likely will not be used)
+   * @param features_json The features.json file (currently not used)
    */
   MusaeGraph(std::string edges_csv, std::string target_csv, std::string features_json);
   
+  /**
+   * @brief Get the neighbors of a given user node
+   * 
+   * @param user_id 
+   * @return Set of unsigned integers representing neighbors of a node
+   */
+  std::set<unsigned int> getNeighbors(unsigned int user_id) const;
+
   /**
    * @brief Get the username matching the user id
    * 
    * @param user_id 
    * @return String reprsenting the username
    */
-  std::string getUsername(unsigned int user_id) const;
+  std::string getUsernameFromId(unsigned int user_id) const;
 
-    /**
-   * @brief Get the user id matching the username
+  /**
+   * @brief Get the user ID matching the username
    * 
    * @param user_id 
-   * @return Unsigned integer reprsenting the user id
+   * @return Unsigned integer reprsenting the user ID
    */
-  unsigned int getUserID(std::string username) const;
+  unsigned int getIdFromUsername(std::string username) const;
 
   /**
    * @brief Get the number of edges
@@ -74,42 +101,59 @@ public:
   unsigned int getCountNodes() const;
 
   /**
-   * @brief Get the neighbors of a given user node
+   * @brief Implementation of BFS traversal, used to find users that are 
+   *        n-degrees away
    * 
-   * @return Set of unsigned integers representing neighbors of a node
-   */
-  std::set<unsigned> getNeighbors(unsigned user_id) const;
-
-  /**
-   * @brief 
-   * 
-   * @param user 
-   * @param degree_connections 
-   * @return Map of users that are degree_connections away from the provided user
+   * @param user User to find connections for
+   * @param degree_connections Max number of degrees to search for (inclusive)
+   * @return Map of users that are degree_connections away from the user
    */
   std::map<unsigned int, std::vector<unsigned int>> bfs_traversal(unsigned int user, unsigned int degree_connections) const;
 
   /**
-  * @brief Implement Djikstra's algorithm
+  * @brief Implementation of Dijkstra's algorithm, used to find shortest path 
+  *        between two users
   *
-  * @return Vector of sets containing nodes up to degree-th degree of connection
+  * @param nodes Adjacency list to use
+  * @param source Starting user ID for shortest path
+  * @param destination Ending user ID for shortest path
+  * @return Shortest path of users to travel through to reach the destination 
+  *         user from the source user. Includes the source and destination in 
+  *         resulting vector. If the source and destination are the same, only 
+  *         the single user ID is included. If the shortest path could not be 
+  *         found (e.g. the users are part of disjoint graphs), return an 
+  *         empty vector.
   */
-  std::vector<unsigned int> dijkstra(unsigned source, unsigned destination) const;
+  std::vector<unsigned int> dijkstra(const std::vector<Node>& nodes, unsigned int source, unsigned int destination) const;
+
+  /**
+   * @brief Default caller for Dijkstra's that uses the nodes_ adjacency list
+   * 
+   * @param source Starting user ID for shortest path
+   * @param destination Ending user ID for shortest path
+   * @return Shortest path of users to travel through to reach the destination 
+   *         user from the source user
+   */
+  std::vector<unsigned int> dijkstra(unsigned int source, unsigned int destination) const;
+
+  /**
+   * @brief A function that iteratively calls dijkstra() for all possible 
+   *        destinations
+   * 
+   * @param source Starting user ID for shortest path
+   * @return A map of destinations and their corresponding shortest paths
+   */
   std::map<unsigned int, std::vector<unsigned int>> dijkstra(unsigned int source) const;
 
   /**
-  * @brief Use Djikstra's algorithm to find shortest path between two given nodes
-  *
-  * @return Unsigned integer representing number of nodes
-  */
-  unsigned int findShortestPath(Node source, Node destination) const;
-
-  /**
-   * @brief Finds a random subset of users that the user might be interested in following
+   * @brief Finds a random subset of users that the user might be interested 
+   *        in following
    * 
    * @param user_id The user ID to find connections for
    * @param max_degree The max degree to search, must be greater than 1
-   * @param reuqest_connection_count The number of users to randomly recommend (if less than 0, return all possible recommendations)
+   * @param request_connection_count The number of users to randomly recommend 
+   *                                 (if less than 0, return all possible 
+   *                                 recommendations)
    * @return A mapping of keys "user_id" to their corresponding value "degree"
    */
   std::map<unsigned int, unsigned int> getRecommendedUsersToFollow(unsigned int user_id, unsigned int max_degree, int request_connection_count) const;  
@@ -117,10 +161,12 @@ public:
   // GIRVAN-NEWMAN IMPLEMENTATION
 
   /**
-   * @brief Helper function that calculates the betweenness centrality for each edge in a graph
+   * @brief Helper function that calculates the betweenness centrality for each 
+   *        edge in a graph and stores it into edges_
    * 
    * @param nodes A reference to the graph adjacency list to use
-   * @return 0 if all edges are connected, n number of edges that could not be computed for shortest path because it is now impossible
+   * @return 0 if all edges are connected or n number of edges that did not 
+   *         have shortest paths
    */
   int betweennessCentrality(std::vector<Node>& nodes);
 
@@ -132,16 +178,24 @@ public:
   void removeEdgeByCentrality(std::vector<Node>& nodes);
 
   /**
-   * @brief Implementation of Girvan-Newman algorithm. Runs until two disjoint are created
+   * @brief Implementation of Girvan-Newman algorithm
+   * 
+   * @param print_debug False to surpress output, true to print debug messages
+   * @return An adjacency list of the resulting graph
+   */
+  std::vector<Node> girvan(bool print_debug);
+
+  /**
+   * @brief Default caller for Girvan-Newman, defaults to not printing debug
    * 
    * @return An adjacency list of the resulting graph
    */
-  std::vector<Node> girvan();
+  std::vector<Node> girvan() { return girvan(false); };
   
   /**
    * @brief Uses Girvan-Newman to split the graph into two distinct communities
    * 
-   * @return A vector containing vectors (communites) and their user IDs
+   * @return A vector of vectors (communites) and their user IDs
    */
   std::vector<std::vector<unsigned int>> calculateCommunities();
 
@@ -160,7 +214,8 @@ private:
    * 
    * @param id_1 
    * @param id_2 
-   * @return std::string Computed edge name, in format "number-number", where the first number is the lowest id of the passed arguments
+   * @return Computed edge name, in format "number-number", where the first 
+   *         number is the lower user ID from the passed arguments (e.g. "0-5")
    */
   std::string makeEdgeName(unsigned int id_1, unsigned int id_2) {
     std::string edge_name;
@@ -177,9 +232,8 @@ private:
   std::vector<Node> nodes_;
   std::vector<std::string> usernames_;
   // edges_ vector used only for Girvan-Newman
-  // second is sp_count (number of shortet paths)
+  // edge_name to count of shortest paths
   std::map<std::string, unsigned int> edges_;
-  
 };
 
 #endif
