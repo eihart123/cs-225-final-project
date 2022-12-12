@@ -51,6 +51,14 @@ public:
    */
   std::string getUsername(unsigned int user_id) const;
 
+    /**
+   * @brief Get the user id matching the username
+   * 
+   * @param user_id 
+   * @return Unsigned integer reprsenting the user id
+   */
+  unsigned int getUserID(std::string username) const;
+
   /**
    * @brief Get the number of edges
    * 

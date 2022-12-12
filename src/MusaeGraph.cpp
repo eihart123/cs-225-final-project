@@ -85,6 +85,15 @@ std::string MusaeGraph::getUsername(unsigned int user_id) const {
   return usernames_.at(user_id);
 }
 
+unsigned int MusaeGraph::getUserID(std::string username) const {
+  for (unsigned int user_id = 0; user_id < nodes_.size(); user_id++) {
+    if (usernames_[user_id] == username) {
+      return user_id;
+    }
+  }
+  return INT_MAX;
+}
+
 unsigned int MusaeGraph::getCountEdges() const {
   return num_edges_;
 }
