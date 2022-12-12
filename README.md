@@ -26,7 +26,23 @@
 
 **Compiling and Running main.cpp**
 1. To compile code for main.cpp run "make" in the command terminal
-2. To run main.cpp, run "./main" in the command terminal
+2. To run main.cpp for finding recommended followers for a given user:
+
+```cpp
+./main <edges_file> <target_file> <features_json> recommended <username>
+```
+
+3. To run main.cpp for finding Github communities:
+
+```cpp
+./main <edges_file> <target_file> <features_json> communities
+```
+
+4. To run main.cpp for raw algorithm results:
+
+```cpp
+./main <edges_file> <target_file> <features_json> algorithm <source_username> <destination_username>
+```
 =======
 ### GitHub Organization ###
 
