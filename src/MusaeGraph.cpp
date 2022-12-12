@@ -284,6 +284,7 @@ int MusaeGraph::betweennessCentrality(std::vector<Node>& nodes) {
       if (i == j) {
         continue;
       }
+      std::cout << "Dijkstra's: " << std::to_string(i) << " " << std::to_string(j) << std::endl;
       std::vector<unsigned int> path = dijkstra(nodes, i, j);
       // if the path size is 0, then no shortest path could be found, which means that the two nodes are in disjoint graphs
       if (path.size() == 0) {
