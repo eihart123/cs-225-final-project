@@ -29,7 +29,7 @@ public:
     std::set<unsigned int> neighbors_;
   };
   /**
-   * @brief NodeComparator struct for use with Dijkstra's
+   * @brief NodeComparator struct for use with Dijkstra's algorithm
    * 
    */
   struct NodeComparator {
@@ -177,10 +177,8 @@ public:
    */
   std::map<unsigned int, unsigned int> getRecommendedUsersToFollow(unsigned int user_id, unsigned int max_degree, int request_connection_count) const;  
 
-  // GIRVAN-NEWMAN IMPLEMENTATION
-
   /**
-   * @brief Helper function that calculates the betweenness centrality for each 
+   * @brief Helper function for Girvan-Newman algorithm that calculates the betweenness centrality for each 
    *        edge in a graph and stores it into edges_
    * 
    * @param nodes A reference to the graph adjacency list to use
@@ -190,7 +188,7 @@ public:
   int betweennessCentrality(std::vector<Node>& nodes);
 
   /**
-   * @brief Helper function that remove the edge with the highest centrality
+   * @brief Helper function for Girvan-Newman algorithm that remove the edge with the highest centrality
    * 
    * @param nodes A reference to the graph adjacency list to use
    */

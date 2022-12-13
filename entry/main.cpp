@@ -15,6 +15,7 @@ int main(int argc, char** argv)
         return 0;
     }
 
+    // run and print recommended followers for user input using Breadth-First Search
     if (functionality == "recommended") {
         std::string edges_file = argv[1];
         std::string target_file = argv[2];
@@ -39,6 +40,7 @@ int main(int argc, char** argv)
 
     }
 
+    // determine and print if two given users are in the same community using Girvan-Newman and Dijkstra's Algorithm
     if (functionality == "communities") {
         std::string edges_file = argv[1];
         std::string target_file = argv[2];
@@ -53,6 +55,55 @@ int main(int argc, char** argv)
                 std::cout << "\t" << githubNetwork.getUsernameFromId(community_member) << std::endl;
             }
         }
+    }
+
+    // run and print output of all the algorithm results (BFS, Dijkstra's Algorithm, and Girvan-Newman Algorithm)
+    if (functionality == "algorithm") {
+        std::string edges_file = argv[1];
+        std::string target_file = argv[2];
+        std::string features_json = argv[3];
+        std::string source_username = argv[5];
+        std::string destination_username = argv[6];
+
+        MusaeGraph githubNetwork = MusaeGraph(edges_file, target_file, features_json);
+
+        unsigned int source_user_id = githubNetwork.getIdFromUsername(source_username);
+        unsigned int destination_user_id = githubNetwork.getIdFromUsername(destination_username);
+
+        std::map<unsigned int, std::vector<unsigned int>> degrees = githubNetwork.bfs_traversal(source_user_id, 3);
+
+        std::cout << "BFS results for " << source_username << " for three degrees:" << std::endl;
+        std::cout << "=======================================" << std::endl;
+        for (auto it = degrees.begin(); it != degrees.end(); it++) {
+            std::cout << (*it).first << ": {";
+            auto vect = (*it).second;
+            for (auto id : vect) {
+                std::cout << std::to_string(id);
+                if (id != vect[vect.size() - 1]) {
+                    std::cout << ", ";
+                }
+            }
+            std::cout << "}" << std::endl;
+        }
+        std::cout << "=======================================" << std::endl << std::endl;
+
+        std::vector<unsigned int> shortestPath = githubNetwork.dijkstra(source_user_id, destination_user_id);
+
+        std::cout << "Dijkstra's Algorithm results from " << source_username << " to " << destination_username << ":" << std::endl;
+        std::cout << "=======================================" << std::endl;
+        std::cout << " {";
+        for (unsigned int id : shortestPath) {
+            std::cout << std::to_string(id);
+            if (id != shortestPath[shortestPath.size() - 1]) {
+                std::cout << ", ";
+            }
+        }
+        std::cout << "}" << std::endl;
+
+        std::cout << "=======================================" << std::endl << std::endl;
+
+        // std::vector<MusaeGraph::Node> communities
+
     }
 
     return 0;
