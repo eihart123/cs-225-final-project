@@ -34,9 +34,9 @@ public:
    */
   struct NodeComparator {
     unsigned int id = 0;
-    int distance = 0;
+    float distance = 0;
 
-    NodeComparator(unsigned int i, unsigned int d) {
+    NodeComparator(unsigned int i, float d) {
       id = i;
       distance = d;
     }
@@ -56,11 +56,23 @@ public:
   /**
    * @brief Construct a new MusaeGraph object
    * 
+   * @param max_user_id The maximum user ID to limit the graph
    * @param edges_csv The edges.csv file containing each edge, in format "id_1,id_2"
    * @param target_csv The target.csv file mapping IDs to usernames
    * @param features_json The features.json file (currently not used)
    */
-  MusaeGraph(std::string edges_csv, std::string target_csv, std::string features_json);
+  MusaeGraph(unsigned int max_user_id, std::string edges_csv, std::string target_csv, std::string features_json);
+
+  /**
+   * @brief Construct a new MusaeGraph object, specifically for GitHub dataset
+   * 
+   * @param max_user_id The maximum user ID to limit the graph
+   * @param ml_target False to filter by software developer, True for ML devs
+   * @param edges_csv The edges.csv file containing each edge, in format "id_1,id_2"
+   * @param target_csv The target.csv file mapping IDs to usernames
+   * @param features_json The features.json file (currently not used)
+   */
+  MusaeGraph(unsigned int max_user_id, bool ml_target, std::string edges_csv, std::string target_csv, std::string features_json);
   
   /**
    * @brief Get the neighbors of a given user node
@@ -69,6 +81,13 @@ public:
    * @return Set of unsigned integers representing neighbors of a node
    */
   std::set<unsigned int> getNeighbors(unsigned int user_id) const;
+
+  /**
+   * @brief Function to find the most popular user in the graph
+   * 
+   * @return The user ID with the most neighbors
+   */
+  unsigned int getMostPopular() const;
 
   /**
    * @brief Get the username matching the user id
@@ -181,23 +200,26 @@ public:
    * @brief Implementation of Girvan-Newman algorithm
    * 
    * @param print_debug False to surpress output, true to print debug messages
+   * @param start User ID to start Girvan-Newman analysis
    * @return An adjacency list of the resulting graph
    */
-  std::vector<Node> girvan(bool print_debug);
+  std::vector<Node> girvan(bool print_debug, unsigned int start);
 
   /**
    * @brief Default caller for Girvan-Newman, defaults to not printing debug
    * 
+   * @param start User ID to start Girvan-Newman analysis
    * @return An adjacency list of the resulting graph
    */
-  std::vector<Node> girvan() { return girvan(false); };
+  std::vector<Node> girvan(unsigned int start) { return girvan(false, start); };
   
   /**
    * @brief Uses Girvan-Newman to split the graph into two distinct communities
+   *        Starts with the community where the most popular user is located.
    * 
    * @return A vector of vectors (communites) and their user IDs
    */
-  std::vector<std::vector<unsigned int>> calculateCommunities();
+  std::vector<std::set<unsigned int>> calculateCommunities();
 
 
 private:
@@ -231,8 +253,9 @@ private:
   unsigned int num_nodes_;
   std::vector<Node> nodes_;
   std::vector<std::string> usernames_;
+  std::vector<bool> valid_users_;
   // edges_ vector used only for Girvan-Newman
-  // edge_name to count of shortest paths
+  // edge_name to shortest path count (centrality)
   std::map<std::string, unsigned int> edges_;
 };
 
