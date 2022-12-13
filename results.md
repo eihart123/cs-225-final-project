@@ -22,7 +22,7 @@ Our worstcase runtime is O(n + m), where n is the number of nodes, and m is the 
 ### Dijkstras Algorithm: ###
 
 - We used Dijkstra's algorithm to find the shortest path from one node to another. Dijkstra's algorithm begins at the starting node visits a node and its adjacent neighbors and determines which route is shortest, repeating the process until it reaches the destination node or it is determined that the destination node is not present. 
-- Our test cases check to see if the shortest path was properly constructed. We prioritize paths with consecutive numbers: for example, if there were two shortest paths, {1, 2, 3, 4, 5} and {1, 2, 4, 3, 5}, which have the same cost, {1, 2, 3, 4, 5} would be prioritized. If there is no path from one node to another, we expect an empty vector to be output. If two of the same node are input for both the start and end of the path, we expect a vector containing just that node once to be output.
+- Our test cases check to see if the shortest path was properly constructed. We prioritize paths with less connections to encourage people to make more connections. If there is no path from one node to another, we expect an empty vector to be output. If two of the same node are input for both the start and end of the path, we expect a vector containing just that node once to be output.
 
 ```
 Dijkstra's Algorithm results from lnsongxf to beedotkiran:
