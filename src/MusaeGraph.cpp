@@ -512,43 +512,85 @@ std::vector<std::set<unsigned int>> MusaeGraph::calculateCommunities() {
   std::vector<std::set<unsigned int>> returnVect;
   std::set<unsigned int> firstSet;
 
-  for (unsigned int i = 0; i < nodes.size(); i++) {
-    // automatically does bfs from first node | if the node at the current index is not in the first vector it will perform bfs from that node 
-    if (i == 0 || firstSet.count(i) == 0) {
-      
-      // initializes data structures for bfs
-      std::set<unsigned int> node1;
-      std::queue<unsigned int> q;
-      std::vector<unsigned int> vect;
-
-      // find first non-empty graph
-      while (nodes[i].neighbors_.size() == 0) {
-        i++;
-      }
-      q.push(i);
-      while (!q.empty()) {
-        // pops and saves top node into node
-        unsigned int node = q.front();
-        q.pop();
-
-        if (node1.count(node) == 0) {
-          // if the node is not in the set it will add it and add all neighbors
-          node1.insert(node);
-          std::set<unsigned int> s = nodes[node].neighbors_;
-          std::set<unsigned int>::iterator it;
-          for (it = s.begin(); it != s.end(); it++) {
-            q.push(*it);
-          }
-        }
-      }
-      
-      returnVect.push_back(node1);
-
-      if (returnVect.size() > 1) {
-        // breaks from loop if this is the second vector added
-        break;
+  unsigned int i = 0;
+  while (nodes[i].neighbors_.size() == 0) {
+    i++;
+  }
+  std::queue<unsigned int> q;
+  std::set<unsigned int> seen;
+  std::set<unsigned int> result1;
+  result1.insert(i);
+  q.push(i);
+  while (!q.empty()) {
+    unsigned int node = q.front();
+    q.pop();
+    for (auto it = nodes[node].neighbors_.begin(); it != nodes[node].neighbors_.end(); it++) {
+      if (result1.count(*it) == 0) {
+        result1.insert(*it);
+        q.push(*it);
       }
     }
+    seen.insert(node);
   }
+  returnVect.push_back(result1);
+  while (nodes[i].neighbors_.size() == 0 || seen.count(i) != 0) {
+    i++;
+  }
+  std::set<unsigned int> result2;
+  result2.insert(i);
+  q.push(i);
+  while (!q.empty()) {
+    unsigned int node = q.front();
+    q.pop();
+    for (auto it = nodes[node].neighbors_.begin(); it != nodes[node].neighbors_.end(); it++) {
+      if (result2.count(*it) == 0) {
+        result2.insert(*it);
+        q.push(*it);
+      }
+    }
+    seen.insert(node);
+  }
+  returnVect.push_back(result2);
+
+  // for (unsigned int i = 0; i < nodes.size(); i++) {
+  //   // automatically does bfs from first node | if the node at the current index is not in the first vector it will perform bfs from that node 
+  //   if (i == 0 || firstSet.count(i) == 0) {
+      
+  //     // initializes data structures for bfs
+  //     std::set<unsigned int> node1;
+  //     std::queue<unsigned int> q;
+  //     std::vector<unsigned int> vect;
+
+  //     // find first non-empty graph
+  //     while (nodes[i].neighbors_.size() == 0) {
+  //       i++;
+  //     }
+  //     q.push(i);
+  //     while (!q.empty()) {
+  //       // pops and saves top node into node
+  //       unsigned int node = q.front();
+  //       q.pop();
+
+  //       if (node1.count(node) == 0) {
+  //         // if the node is not in the set it will add it and add all neighbors
+  //         node1.insert(node);
+  //         std::set<unsigned int> s = nodes[node].neighbors_;
+  //         std::set<unsigned int>::iterator it;
+  //         for (it = s.begin(); it != s.end(); it++) {
+  //           q.push(*it);
+  //         }
+  //       }
+  //     }
+      
+  //     returnVect.push_back(node1);
+      
+  //     firstSet = node1;
+
+  //     if (returnVect.size() > 1) {
+  //       // breaks from loop if this is the second vector added
+  //       break;
+  //     }
+  //   }
+  // }
   return returnVect;
 }
