@@ -509,10 +509,10 @@ std::vector<std::set<unsigned int>> MusaeGraph::calculateCommunities() {
   std::cout << "[*] Total number of edges: " << edges_.size() << std::endl;
   std::vector<Node> nodes = girvan(true, start_id);
   std::cout << "[+] Completed Girvan-Newman!" << std::endl;
-  std::vector<std::set<unsigned int>> returnVect;
-  std::set<unsigned int> firstSet;
 
+  std::vector<std::set<unsigned int>> returnVect;
   unsigned int i = 0;
+  // calculate first community
   while (nodes[i].neighbors_.size() == 0) {
     i++;
   }
@@ -533,6 +533,7 @@ std::vector<std::set<unsigned int>> MusaeGraph::calculateCommunities() {
     seen.insert(node);
   }
   returnVect.push_back(result1);
+  // calculate second community
   while (nodes[i].neighbors_.size() == 0 || seen.count(i) != 0) {
     i++;
   }
@@ -551,46 +552,5 @@ std::vector<std::set<unsigned int>> MusaeGraph::calculateCommunities() {
     seen.insert(node);
   }
   returnVect.push_back(result2);
-
-  // for (unsigned int i = 0; i < nodes.size(); i++) {
-  //   // automatically does bfs from first node | if the node at the current index is not in the first vector it will perform bfs from that node 
-  //   if (i == 0 || firstSet.count(i) == 0) {
-      
-  //     // initializes data structures for bfs
-  //     std::set<unsigned int> node1;
-  //     std::queue<unsigned int> q;
-  //     std::vector<unsigned int> vect;
-
-  //     // find first non-empty graph
-  //     while (nodes[i].neighbors_.size() == 0) {
-  //       i++;
-  //     }
-  //     q.push(i);
-  //     while (!q.empty()) {
-  //       // pops and saves top node into node
-  //       unsigned int node = q.front();
-  //       q.pop();
-
-  //       if (node1.count(node) == 0) {
-  //         // if the node is not in the set it will add it and add all neighbors
-  //         node1.insert(node);
-  //         std::set<unsigned int> s = nodes[node].neighbors_;
-  //         std::set<unsigned int>::iterator it;
-  //         for (it = s.begin(); it != s.end(); it++) {
-  //           q.push(*it);
-  //         }
-  //       }
-  //     }
-      
-  //     returnVect.push_back(node1);
-      
-  //     firstSet = node1;
-
-  //     if (returnVect.size() > 1) {
-  //       // breaks from loop if this is the second vector added
-  //       break;
-  //     }
-  //   }
-  // }
   return returnVect;
 }
