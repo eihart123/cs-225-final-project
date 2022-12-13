@@ -383,39 +383,3 @@ TEST_CASE("musae_gh_getUserNameFromId", "[weight=10], [musae_gh], [construct]") 
   }
   std::cout << std::to_string(m.getCountEdges()) << std::endl;
 }
-
-TEST_CASE("musae_gh_dijkstra", "[weight=10], [musae_gh], [dijkstra]") {
-  std::string edges_csv = "../data/git_web_ml/musae_git_edges.csv";
-  std::string target_csv = "../data/git_web_ml/musae_git_target.csv";
-  std::string features_json = "../data/git_web_ml/musae_git_features.json";
-  MusaeGraph m(37000, true, edges_csv, target_csv, features_json);
-
-  // auto paths = m.dijkstra(14954);
-  // for (auto path : paths) {
-  //   for (auto id : path.second) {
-  //     std::cout << std::to_string(id) << " ";
-  //   }
-  //   std::cout << std::endl;
-  // }
-  // std::cout << std::endl;
-  auto path = m.dijkstra(14954, 25845);
-  for (auto id : path) {
-    std::cout << std::to_string(id) << " ";
-  }
-  std::cout << std::endl;
-}
-
-TEST_CASE("musae_gh_calculateCommunities", "[weight=10], [musae_gh], [girvan]") {
-  std::string edges_csv = "../data/git_web_ml/musae_git_edges.csv";
-  std::string target_csv = "../data/git_web_ml/musae_git_target.csv";
-  std::string features_json = "../data/git_web_ml/musae_git_features.json";
-  MusaeGraph m(4000, true, edges_csv, target_csv, features_json);
-
-  auto communities = m.calculateCommunities();
-  for (auto community : communities) {
-    for (auto it = community.begin(); it != community.end(); it++) {
-      std::cout << (*it) << " ";
-    }
-    std::cout << std::endl;
-  }
-}
