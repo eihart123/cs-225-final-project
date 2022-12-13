@@ -427,7 +427,7 @@ int MusaeGraph::betweennessCentrality(std::vector<Node>& nodes) {
       }
     }
   }
-  return (num_bad_edges); // divided by 2 because we process each node undirected (however this does not guarantee the same sortest path)
+  return (num_bad_edges);
 }
 
 void MusaeGraph::removeEdgeByCentrality(std::vector<Node>& nodes) {
