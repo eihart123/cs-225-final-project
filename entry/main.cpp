@@ -13,11 +13,21 @@ int main(int argc, char** argv)
     std::string functionality = argv[5];
 
     if ((argc != 7 || functionality != "recommended") && (argc != 6 || functionality != "communities") && (argc != 8 || functionality != "algorithm")) {
-        std::cout << "Find follower recommendations: ./main <edges_file> <target_file> <features_json> {false|true} recommended <username> " << std::endl;
-        std::cout << "Find GitHub communities: ./main <edges_file> <target_file> <features_json> {false|true} communities" << std::endl;
-        std::cout << "Run algorithms and measure execution time: ./main <edges_file> <target_file> <features_json> {false|true} algorithm <source_username> <destination_username>" << std::endl;
+        std::cout << "Usage: ./main <edges_csv> <target_csv> <features_json> <reduce> <option> [source user] [destination user]" << std::endl;
+        std::cout << "<edges_csv> - edges file to use" << std::endl;
+        std::cout << "<target_csv> - target file to use" << std::endl;
+        std::cout << "<features_json> - features file to use" << std::endl;
+        std::cout << "<reduce> - {false|true}: whether to reduce the dataset to only ML developers" << std::endl;
+        std::cout << "<option> - {recommended|communities|algorithm}:" << std::endl;
+        std::cout << "\trecommended - find recommended users for [source user]" << std::endl;
+        std::cout << "\tcommunities - split a community into two communities based on [sources user]" << std::endl;
+        std::cout << "\talgorithm - test run time of each of the implemented algorithms, requires [source user] and [destination user]" << std::endl;
+        std::cout << "[source user] - username of source profile" << std::endl;
+        std::cout << "[destination user] - username of destination profile" << std::endl;
+
         std::cout << std::endl;
-        std::cout << "Example run: ./main ../data/git_web_ml/musae_git_edges.csv ../data/git_web_ml/musae_git_target.csv ../tests/git_web_ml/musae_git_features.json true algorithm lnsongxf beedo" << std::endl;
+        std::cout << "\tExample run: ./main ../data/git_web_ml/musae_git_edges.csv ../data/git_web_ml/musae_git_target.csv ../tests/git_web_ml/musae_git_features.json true algorithm lnsongxf beedo" << std::endl;
+        std::cout << std::endl;
         return 0;
     }
 
