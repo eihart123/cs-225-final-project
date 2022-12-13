@@ -75,5 +75,6 @@ Usage: ./main <edges_csv> <target_csv> <features_json> <reduce> <option> [source
 [source user] - username of source profile
 [destination user] - username of destination profile
 
-        Example run: ./main ../data/git_web_ml/musae_git_edges.csv ../data/git_web_ml/musae_git_target.csv ../tests/git_web_ml/musae_git_features.json true algorithm lnsongxf beedo
+Example run:
+        ./main ../data/git_web_ml/musae_git_edges.csv ../data/git_web_ml/musae_git_target.csv ../tests/git_web_ml/musae_git_features.json true algorithm lnsongxf beedo
 ```
