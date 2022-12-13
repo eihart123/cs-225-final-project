@@ -9,7 +9,7 @@
 
 4. **Written Report** Our written report is located in the project directory and is the ./results.md file.
 
-5. **Presentation Video** Our video is located in ....
+5. **Presentation Video** Our video is located at https://youtu.be/tlQuLb3ovv4
 
 ## Running Instructions ##
 
