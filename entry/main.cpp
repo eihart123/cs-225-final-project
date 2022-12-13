@@ -1,17 +1,23 @@
 #include <iostream>
 #include <string>
+#include <chrono>
 #include <bits/stdc++.h>
+
 #include "MusaeGraph.h"
 
 int main(int argc, char** argv)
 {
 
-    std::string functionality = argv[4];
+    unsigned int MAX_USER_ID = 5000;
 
-    if ((argc != 6 || functionality != "recommended") && (argc != 5 || functionality != "communities") && (argc != 7 || functionality != "algorithm")) {
-        std::cout << "Run format for finding follower recommendations: ./main <edges_file> <target_file> <features_json> recommended <username>" << std::endl;
-        std::cout << "Run format for finding GitHub communities: ./main <edges_file> <target_file> <features_json> communities" << std::endl;
-        std::cout << "Run format for algorithm results: ./main <edges_file> <target_file> <features_json> algorithm <source_username> <destination_username>" << std::endl;
+    std::string functionality = argv[5];
+
+    if ((argc != 7 || functionality != "recommended") && (argc != 6 || functionality != "communities") && (argc != 8 || functionality != "algorithm")) {
+        std::cout << "Find follower recommendations: ./main <edges_file> <target_file> <features_json> {false|true} recommended <username> " << std::endl;
+        std::cout << "Find GitHub communities: ./main <edges_file> <target_file> <features_json> {false|true} communities" << std::endl;
+        std::cout << "Run algorithms and measure execution time: ./main <edges_file> <target_file> <features_json> {false|true} algorithm <source_username> <destination_username>" << std::endl;
+        std::cout << std::endl;
+        std::cout << "Example run: ./main ../data/git_web_ml/musae_git_edges.csv ../data/git_web_ml/musae_git_target.csv ../tests/git_web_ml/musae_git_features.json true algorithm lnsongxf beedo" << std::endl;
         return 0;
     }
 
@@ -20,20 +26,25 @@ int main(int argc, char** argv)
         std::string edges_file = argv[1];
         std::string target_file = argv[2];
         std::string features_json = argv[3];
-        std::string username = argv[5];
+        std::string username = argv[6];
+        std::string include_ml = argv[4];
 
-        MusaeGraph githubNetwork = MusaeGraph(edges_file, target_file, features_json);
+        MusaeGraph githubNetwork = MusaeGraph(MAX_USER_ID, edges_file, target_file, features_json);
 
+        if (include_ml == "true") {
+            githubNetwork = MusaeGraph(MAX_USER_ID, true, edges_file, target_file, features_json);
+        }
+       
         unsigned int user_id = githubNetwork.getIdFromUsername(username);
 
         if (user_id == INT_MAX) {
-            std::cout << "User does not exist" << std::endl;
+            std::cout << "[!] Error: User does not exist" << std::endl;
             return 0;
         }
 
         std::map<unsigned int, unsigned int> recommendations = githubNetwork.getRecommendedUsersToFollow(user_id, 3, 5);
 
-        std::cout << "Users we think " << username << " will love: " << std::endl;
+        std::cout << "[+] Users we think " << username << " will love: " << std::endl;
         for (std::pair<unsigned int, unsigned int> user : recommendations) {
             std::cout << githubNetwork.getUsernameFromId(user.first) << " (degree " << std::to_string(user.second) << ")" << std::endl;
         }
@@ -45,9 +56,15 @@ int main(int argc, char** argv)
         std::string edges_file = argv[1];
         std::string target_file = argv[2];
         std::string features_json = argv[3];
+        std::string include_ml = argv[4];
 
-        MusaeGraph githubNetwork = MusaeGraph(edges_file, target_file, features_json);
-        std::vector<std::vector<unsigned int>> communities = githubNetwork.calculateCommunities();
+        MusaeGraph githubNetwork = MusaeGraph(MAX_USER_ID, edges_file, target_file, features_json);
+
+        if (include_ml == "true") {
+            githubNetwork = MusaeGraph(MAX_USER_ID, true, edges_file, target_file, features_json);
+        }
+        
+        std::vector<std::set<unsigned int>> communities = githubNetwork.calculateCommunities();
 
         for (unsigned int community = 0; community < communities.size(); community++) {
             std::cout << "Community " << std::to_string(community + 1) << ":" << std::endl;
@@ -62,18 +79,27 @@ int main(int argc, char** argv)
         std::string edges_file = argv[1];
         std::string target_file = argv[2];
         std::string features_json = argv[3];
-        std::string source_username = argv[5];
-        std::string destination_username = argv[6];
+        std::string include_ml = argv[4];
+        std::string source_username = argv[6];
+        std::string destination_username = argv[7];        
+        
+        MusaeGraph githubNetwork = MusaeGraph(MAX_USER_ID, edges_file, target_file, features_json);
 
-        MusaeGraph githubNetwork = MusaeGraph(edges_file, target_file, features_json);
-
+        if (include_ml == "true") {
+            githubNetwork = MusaeGraph(MAX_USER_ID, true, edges_file, target_file, features_json);
+        }
+        
         unsigned int source_user_id = githubNetwork.getIdFromUsername(source_username);
         unsigned int destination_user_id = githubNetwork.getIdFromUsername(destination_username);
 
-        std::map<unsigned int, std::vector<unsigned int>> degrees = githubNetwork.bfs_traversal(source_user_id, 3);
-
-        std::cout << "BFS results for " << source_username << " for three degrees:" << std::endl;
+        std::cout << "BFS results for " << source_username << " for 3 degrees:" << std::endl;
         std::cout << "=======================================" << std::endl;
+
+        auto start_time = std::chrono::high_resolution_clock::now();
+        std::map<unsigned int, std::vector<unsigned int>> degrees = githubNetwork.bfs_traversal(source_user_id, 3);
+        auto end_time = std::chrono::high_resolution_clock::now();
+        auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time);
+
         for (auto it = degrees.begin(); it != degrees.end(); it++) {
             std::cout << (*it).first << ": {";
             auto vect = (*it).second;
@@ -85,12 +111,17 @@ int main(int argc, char** argv)
             }
             std::cout << "}" << std::endl;
         }
+        std::cout << "Execution time: " << duration.count() << " microseconds" << std::endl;
         std::cout << "=======================================" << std::endl << std::endl;
-
-        std::vector<unsigned int> shortestPath = githubNetwork.dijkstra(source_user_id, destination_user_id);
 
         std::cout << "Dijkstra's Algorithm results from " << source_username << " to " << destination_username << ":" << std::endl;
         std::cout << "=======================================" << std::endl;
+        
+        start_time = std::chrono::high_resolution_clock::now();
+        std::vector<unsigned int> shortestPath = githubNetwork.dijkstra(source_user_id, destination_user_id);
+        end_time = std::chrono::high_resolution_clock::now();
+        duration = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time);
+
         std::cout << " {";
         for (unsigned int id : shortestPath) {
             std::cout << std::to_string(id);
@@ -99,10 +130,34 @@ int main(int argc, char** argv)
             }
         }
         std::cout << "}" << std::endl;
+        std::cout << " {";
+        for (unsigned int id : shortestPath) {
+            std::cout << githubNetwork.getUsernameFromId(id);
+            if (id != shortestPath[shortestPath.size() - 1]) {
+                std::cout << ", ";
+            }
+        }
+        std::cout << "}" << std::endl;
 
+        std::cout << "Execution time: " << duration.count() << " microseconds" << std::endl;
         std::cout << "=======================================" << std::endl << std::endl;
 
-        // std::vector<MusaeGraph::Node> communities
+        std::cout << "Communities created by Girvan-Newman Algorithm" << std::endl;
+        std::cout << "=======================================" << std::endl;
+        start_time = std::chrono::high_resolution_clock::now();
+        std::vector<std::set<unsigned int>> communities = githubNetwork.calculateCommunities();
+        end_time = std::chrono::high_resolution_clock::now();
+        duration = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time);
+
+        for (unsigned int community = 0; community < communities.size(); community++) {
+            std::cout << "Community " << std::to_string(community + 1) << " (" << communities[community].size() << " members):" << std::endl << "\t" << "[";
+            for (unsigned int community_member : communities[community]) {
+                std::cout << githubNetwork.getUsernameFromId(community_member) << ", ";
+            }
+            std::cout << "]" << std::endl;
+        }
+        std::cout << "Execution time: " << duration.count() << " microseconds" << std::endl;
+        std::cout << "=======================================" << std::endl << std::endl;
 
     }
 
