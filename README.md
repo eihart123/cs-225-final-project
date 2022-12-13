@@ -11,39 +11,6 @@
 
 5. **Presentation Video** Our video is located in ....
 
-## Running Instructions ##
-
-### Building Executable
-
-**Creating build file**
-1. In the base directory of the repository run "mkdir build"
-2. Then run "cd ./build"
-3. Next run "cmake .." to initialize the build directory
-
-**Compiling and Running Test Cases**
-1. To compile code for test cases run "make test" in the command terminal
-2. To run the test cases, run "./test" in the command terminal
-
-**Compiling and Running main.cpp**
-1. To compile code for main.cpp run "make" in the command terminal
-2. To run main.cpp for finding recommended followers for a given user:
-
-```cpp
-./main <edges_file> <target_file> <features_json> recommended <username>
-```
-
-3. To run main.cpp for finding Github communities:
-
-```cpp
-./main <edges_file> <target_file> <features_json> communities
-```
-
-4. To run main.cpp for raw algorithm results:
-
-```cpp
-./main <edges_file> <target_file> <features_json> algorithm <source_username> <destination_username>
-```
-=======
 ### GitHub Organization ###
 
 1. **Tests** The test cases for this project are under the ./tests folder in the directory and the file is labeled ./tests.cpp. The test data (edges, features, and target) are all in the ./tests folder in the project directory and make up all other files besides ./tests.cpp.
@@ -69,4 +36,44 @@
 
 **Compiling and Running main.cpp**
 1. To compile code for main.cpp run "make" in the command terminal
-2. To run main.cpp, run "./main" in the command terminal
+2. To run main.cpp for finding recommended followers for a given user:
+
+```
+./main <edges_file> <target_file> <features_json> {false|true} recommended <username>
+```
+
+3. To run main.cpp for finding Github communities:
+
+```
+./main <edges_file> <target_file> <features_json> {false|true} communities
+```
+
+4. To run main.cpp for raw algorithm results:
+
+```
+./main <edges_file> <target_file> <features_json> {false|true} algorithm <source_username> <destination_username>
+```
+
+For an example of our algorithms on a large scale, run this command in the /build directory:
+
+```
+./main ../data/git_web_ml/musae_git_edges.csv ../data/git_web_ml/musae_git_target.csv ../tests/git_web_ml/musae_git_features.json true algorithm lnsongxf beedo
+```
+
+### Help Menu ###
+
+```
+Usage: ./main <edges_csv> <target_csv> <features_json> <reduce> <option> [source user] [destination user]
+<edges_csv> - edges file to use
+<target_csv> - target file to use
+<features_json> - features file to use
+<reduce> - {false|true}: whether to reduce the dataset to only ML developers
+<option> - {recommended|communities|algorithm}:
+        recommended - find recommended users for [source user]
+        communities - split a community into two communities based on [sources user]
+        algorithm - test run time of each of the implemented algorithms, requires [source user] and [destination user]
+[source user] - username of source profile
+[destination user] - username of destination profile
+
+        Example run: ./main ../data/git_web_ml/musae_git_edges.csv ../data/git_web_ml/musae_git_target.csv ../tests/git_web_ml/musae_git_features.json true algorithm lnsongxf beedo
+```
